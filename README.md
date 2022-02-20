@@ -4,7 +4,7 @@ Fossil is an archive manager for the Pterodactyl game panel, able to archive use
 ## Installation
 You don't (yet)
 
-... but if you want to contribute, ses [contributing](#contributing). :D
+... but if you want to contribute, see [contributing](#contributing). :D
 
 ## Usage
 Don't use it (yet).
@@ -13,7 +13,7 @@ Don't use it (yet).
 TODO.
 
 ## Contributing
-1. Fork it (<https://github.com/PteroPackages/fossil/fork>)
+1. Fork it (<https://github.com/PteroPackages/Fossil/fork>)
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
@@ -24,4 +24,4 @@ TODO.
 
 This repository is managed under the MIT license.
 
-©️ 2022 PteroPackages
+© 2022 PteroPackages
