@@ -52,7 +52,7 @@ module Fossil
       parser.on("--debug", "logs debug messages") { opts.debug = true }
       parser.on("--trace", "traces error sources") { opts.trace = true }
       parser.on("--verbose", "enables verbose logging") { opts.verbose = true }
-      parser.on("--no-color", "disables color for logs") { opts.no_colour = true }
+      parser.on("--no-color", "disables color for logs") { opts.no_color = true }
       parser.on("-h", "--help", "sends help!") { send_help! }
       parser.on("-v", "--version", "shows the current version") do
         puts "Fossil #{VERSION}"
