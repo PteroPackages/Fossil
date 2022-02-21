@@ -1,4 +1,4 @@
-require "./fossil/**"
+require "./config.cr"
 require "./logger.cr"
 
 module Fossil
