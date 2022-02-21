@@ -9,13 +9,13 @@ module Fossil
   Colorize.on_tty_only!
 
   struct CmdOptions
-    property debug     : Bool
-    property trace     : Bool
-    property verbose   : Bool
-    property no_colour : Bool
+    property debug    : Bool
+    property trace    : Bool
+    property verbose  : Bool
+    property no_color : Bool
 
     def initialize(@debug = false, @trace = false,
-      @verbose = false, @no_colour = false)
+      @verbose = false, @no_color = false)
     end
   end
 

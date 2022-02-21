@@ -2,19 +2,19 @@ require "colorize"
 
 module Fossil
   class Logger
-    getter stack  : Array(String)
-    getter colour : Bool
+    getter stack : Array(String)
+    getter color : Bool
 
-    def initialize(use_colour : Bool)
+    def initialize(use_color : Bool)
       @stack = [] of String
-      @colour = Colorize.enabled? ? use_colour : false
+      @color = Colorize.enabled? ? use_color : false
     end
 
     def info(message)
       message = "info: " + message
       @stack << Time.utc.to_s "%D %T - #{message}"
 
-      if @colour
+      if @color
         message = message[..3].colorize(:blue).to_s + message[4..]
       end
 
@@ -25,7 +25,7 @@ module Fossil
       message = "warn: " + message
       @stack << Time.utc.to_s "%D %T - #{message}"
 
-      if @colour
+      if @color
         message = message[..3].colorize(:yellow).to_s + message[4..]
       end
 
@@ -38,7 +38,7 @@ module Fossil
         @stack << Time.utc.to_s "%D %T - #{message}"
       end
 
-      if @colour
+      if @color
         puts messages.map { |m| m[..4].colorize(:red).to_s + m[5..] }.join("\n")
       else
         puts messages.join "\n"
