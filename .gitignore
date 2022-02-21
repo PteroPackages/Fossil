@@ -4,3 +4,4 @@
 /.shards/
 /tests/
 *.dwarf
+shard.lock
