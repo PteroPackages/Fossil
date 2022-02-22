@@ -1,56 +1,68 @@
 require "colorize"
 
 module Fossil
-  class Logger
-    getter stack : Array(String)
-    getter color : Bool
+  module Logger
+    @@stack = [] of String
+    @@color = false
+    @@levels = {
+      :blue => "info",
+      :yellow => "warn",
+      :red => "error"
+    }
 
-    def initialize(use_color : Bool)
-      @stack = [] of String
-      @color = Colorize.enabled? ? use_color : false
+    def self.get_stack
+      @@stack
     end
 
-    def info(message)
-      message = "info: " + message
-      @stack << Time.utc.to_s "%D %T - #{message}"
-
-      if @color
-        message = message[..3].colorize(:blue).to_s + message[4..]
-      end
-
-      STDOUT.puts message
+    def self.set_color(value)
+      @@color = Colorize.enabled? ? value : false
     end
 
-    def warn(message)
-      message = "warn: " + message
-      @stack << Time.utc.to_s "%D %T - #{message}"
+    def self.write(messages : Array(String), color : Symbol) : Nil
+      messages.each { |m| @@stack << Time.utc.to_s "%D %T - #{@@levels[color]}: #{m}" }
+      result = ""
 
-      if @color
-        message = message[..3].colorize(:yellow).to_s + message[4..]
-      end
-
-      STDOUT.puts message
-    end
-
-    def error(messages : Array(String))
-      messages = messages.map { |m| "error: " + m }
-      messages.each do |message|
-        @stack << Time.utc.to_s "%D %T - #{message}"
-      end
-
-      if @color
-        puts messages.map { |m| m[..4].colorize(:red).to_s + m[5..] }.join("\n")
+      if @@color
+        result = messages.map { |m| @@levels[color].colorize(color).to_s + ": #{m}" }.join "\n"
       else
-        puts messages.join "\n"
+        result = messages.map { |m| "#{@@levels[color]} #{m}" }.join "\n"
+      end
+
+      if color == :red
+        STDERR.puts result
+      else
+        STDOUT.puts result
       end
     end
 
-    def error(message : String)
-      error [message]
+    def self.info(messages : Array(String))
+      self.write messages, :blue
     end
 
-    def fatal(err)
-      error err
+    def self.info(message : String)
+      self.write [message], :blue
+    end
+
+    def self.warn(messages : Array(String))
+      self.write messages, :yellow
+    end
+
+    def self.warn(message : String)
+      self.write [message], :yellow
+    end
+
+    def self.error(messages : Array(String), close : Bool = false)
+      self.write messages, :red
+      exit(1) if close
+    end
+
+    def self.error(message : String, close : Bool = false)
+      self.write [message], :red
+      exit(1) if close
+    end
+
+    def self.error(err : Exception)
+      self.write(err.backtrace.not_nil! || ["fatal error: #{err.to_s}"], :red)
       exit 1
     end
   end
