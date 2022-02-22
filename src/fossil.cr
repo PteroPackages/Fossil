@@ -95,7 +95,5 @@ end
 begin
   Fossil.run
 rescue ex
-  STDERR.puts "fatal: unexpected error"
-  ex.to_s STDERR
-  exit 1
+  Fossil::Logger.error ex
 end
