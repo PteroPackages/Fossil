@@ -1,5 +1,6 @@
 require "colorize"
 require "option_parser"
+require "./commands/**"
 require "./config.cr"
 require "./logger.cr"
 
@@ -78,6 +79,8 @@ module Fossil
         when "delete"
           # TODO
           exit
+        when "config"
+          Commands::ConfigSetup.run args[1..], opts
         when "version"
           puts "Fossil #{VERSION}"
           exit 0
