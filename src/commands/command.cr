@@ -1,9 +1,6 @@
 module Fossil::Commands
   abstract class Command
-    getter config : Config
-
     def initialize
-      @config = Config.fetch
     end
 
     def self.run(*args)
