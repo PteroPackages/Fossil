@@ -9,6 +9,8 @@ module Fossil::Commands
       when "set"
         # TODO
         exit
+      when "init"
+        init_config opts.debug
       when "reset"
         # TODO
         exit
@@ -28,6 +30,7 @@ module Fossil::Commands
 
       SubCommands:
           show
+          init
           set
           reset
 
@@ -40,13 +43,22 @@ module Fossil::Commands
     end
 
     def show_config
-      puts <<-CFG
-      domain:  #{@config.domain}
-      api key: #{@config.auth}
+      cfg = Config.fetch
 
-      cache_path: #{@config.cache_path}
-      export fmt: #{@config.format}
+      puts <<-CFG
+      domain:  #{cfg.domain}
+      api key: #{cfg.auth}
+
+      archive dir: #{cfg.archive_dir}
+      default file format: #{cfg.file_format}
+      default export format: #{cfg.export_format}
       CFG
+    end
+
+    def init_config(debug)
+      Logger.info "attempting to create config"
+      Config.init debug
+      Logger.info "created new fossil config"
     end
   end
 end
