@@ -3,7 +3,7 @@ require "colorize"
 module Fossil
   module Logger
     @@stack = [] of String
-    @@color = false
+    @@color = true
     @@levels = {
       :blue => "info",
       :yellow => "warn",
@@ -25,7 +25,7 @@ module Fossil
       if @@color
         result = messages.map { |m| @@levels[color].colorize(color).to_s + ": #{m}" }.join "\n"
       else
-        result = messages.map { |m| "#{@@levels[color]} #{m}" }.join "\n"
+        result = messages.map { |m| "#{@@levels[color]}: #{m}" }.join "\n"
       end
 
       if color == :red
