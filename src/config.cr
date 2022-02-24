@@ -1,9 +1,6 @@
 require "yaml"
 
 module Fossil
-  class ConfigError < Exception
-  end
-
   class Config
     property domain     : String
     property auth       : String
@@ -18,15 +15,17 @@ module Fossil
     end
 
     def self.fetch : self
-      path = ENV.fetch("FOSSIL_PATH") {
-        raise ConfigError.new "environment variable 'FOSSIL_PATH' not set"
-      }
+      path = ENV["FOSSIL_PATH"]?
 
-      unless File.exists? path
-        raise ConfigError.new "environment variable 'FOSSIL_PATH' is an invalid path"
+      if path.nil?
+        Logger.error "environment variable 'FOSSIL_PATH' not set", true
       end
 
-      File.open(path) { |file| new YAML.parse(file) }
+      unless File.exists? path.not_nil!
+        Logger.error "environment variable 'FOSSIL_PATH' is an invalid path", true
+      end
+
+      File.open(path.not_nil!) { |file| new YAML.parse(file) }
     end
   end
 end
