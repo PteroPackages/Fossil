@@ -21,11 +21,13 @@ module Fossil
         Logger.error "environment variable 'FOSSIL_PATH' not set", true
       end
 
-      unless File.exists? path.not_nil!
+      file = begin
+        File.read path.not_nil!
+      rescue
         Logger.error "environment variable 'FOSSIL_PATH' is an invalid path", true
       end
 
-      File.open(path.not_nil!) { |file| new YAML.parse(file) }
+      new YAML.parse(file.not_nil!)
     end
   end
 end
