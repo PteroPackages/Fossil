@@ -62,8 +62,17 @@ module Fossil
     end
 
     def self.error(err : Exception)
-      self.write(err.backtrace.not_nil! || ["fatal error: #{err.to_s}"], :red)
+      self.write [err.message || "unknown error"], :red
+      self.write err.backtrace.not_nil!, :red
       exit 1
+    end
+
+    def self.debug(messages : Array(String))
+      self.write messages, :reset
+    end
+
+    def self.debug(message : String)
+      self.write [message], :reset
     end
   end
 end
