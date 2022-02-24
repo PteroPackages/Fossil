@@ -1,15 +1,17 @@
 module Fossil::Commands
   abstract class Command
-    property config : Config
+    getter config : Config
 
     def initialize
       @config = Config.fetch
     end
 
+    def self.run(*args)
+      new.run *args
+    end
+
     def debug(message)
       Logger.debug message
     end
-
-    abstract def run
   end
 end

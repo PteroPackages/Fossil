@@ -31,6 +31,7 @@ module Fossil
         export    exports an archive as a zip file
         prune     removes archives matching a filter
         delete    removes a specified archive
+        config    manages the fossil config
         version   shows the current version
 
     Options:

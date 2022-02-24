@@ -1,7 +1,7 @@
 module Fossil::Commands
   class ConfigSetup < Command
     def run(args : Array(String), opts : CmdOptions)
-      send_help unless args[0]?
+      send_help! unless args[0]?
 
       case args[0]
       when "show"
@@ -19,7 +19,7 @@ module Fossil::Commands
       exit 0
     end
 
-    def send_help
+    def send_help!
       puts <<-HELP
       Commands for managing the Fossil config
 
@@ -39,13 +39,13 @@ module Fossil::Commands
       exit 0
     end
 
-    def show_config(cfg)
+    def show_config
       puts <<-CFG
-      domain:  #{cfg.domain}
-      api key: #{cf.auth}
+      domain:  #{@config.domain}
+      api key: #{@config.auth}
 
-      cache_path: #{cfg.cache_path}
-      export fmt: #{cfg.format}
+      cache_path: #{@config.cache_path}
+      export fmt: #{@config.format}
       CFG
     end
   end
