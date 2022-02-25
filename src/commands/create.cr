@@ -28,9 +28,8 @@ module Fossil::Commands
 
         Logger.info "finalizing..."
         File.write path, parsed.to_json
-        Logger.info [
-          "request complete!",
-          "archive can be found here:",
+        Logger.success [
+          "request complete! archive can be found here:",
           path.to_s
         ]
       rescue ex

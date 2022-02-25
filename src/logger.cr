@@ -6,6 +6,7 @@ module Fossil
     @@color = true
     @@levels = {
       :blue => "info",
+      :green => "success",
       :yellow => "warn",
       :red => "error",
       :default => "debug"
