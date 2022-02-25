@@ -7,7 +7,8 @@ module Fossil
     @@levels = {
       :blue => "info",
       :yellow => "warn",
-      :red => "error"
+      :red => "error",
+      :default => "debug"
     }
 
     def self.get_stack
@@ -39,21 +40,20 @@ module Fossil
       STDOUT.puts "Fossil archive manager v#{VERSION}".colorize(:dark_gray).to_s
     end
 
-    def self.info(messages : Array(String))
-      self.write messages, :blue
+    {% for color, level in {
+      :blue => "info",
+      :green => "success",
+      :yellow => "warn",
+      :default => "debug"
+    } %}
+    def self.{{ level.id }}(messages : Array(String))
+      self.write messages, :{{ color.id }}
     end
 
-    def self.info(message : String)
-      self.write [message], :blue
+    def self.{{ level.id }}(message : String)
+      self.write [message], :{{ color.id }}
     end
-
-    def self.warn(messages : Array(String))
-      self.write messages, :yellow
-    end
-
-    def self.warn(message : String)
-      self.write [message], :yellow
-    end
+    {% end %}
 
     def self.error(messages : Array(String), close : Bool = false)
       self.write messages, :red
@@ -69,14 +69,6 @@ module Fossil
       self.write [err.message || "unknown error"], :red
       self.write err.backtrace.not_nil!, :red
       exit 1
-    end
-
-    def self.debug(messages : Array(String))
-      self.write messages, :reset
-    end
-
-    def self.debug(message : String)
-      self.write [message], :reset
     end
   end
 end
