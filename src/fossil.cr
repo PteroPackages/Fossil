@@ -3,6 +3,8 @@ require "option_parser"
 require "./commands/**"
 require "./config.cr"
 require "./logger.cr"
+require "./models.cr"
+require "./requests.cr"
 
 module Fossil
   VERSION = "0.1.0"
@@ -66,8 +68,7 @@ module Fossil
 
         case args[0]
         when "create"
-          # TODO
-          exit
+          Commands::Create.run args[1..], opts
         when "compare"
           # TODO
           exit
