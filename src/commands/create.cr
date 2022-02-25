@@ -1,5 +1,3 @@
-require "crest"
-
 module Fossil::Commands
   class Create
     def self.run(args : Array(String), opts : CmdOptions)
@@ -20,12 +18,12 @@ module Fossil::Commands
       error = false
       begin
         parsed = Array(Models::User).new
-        users = Array(Models::User).from_json res, root: "data"
+        users = Array(Models::Wrap(Models::User)).from_json res, root: "data"
 
         users.each_with_index do |user, index|
-          Logger.info "parsing object %d/%d" % [index, users.size]
+          Logger.info "parsing object %d/%d" % [index + 1, users.size]
           # TODO: add patch checker
-          parsed << user
+          parsed << user.attributes
         end
 
         Logger.info "finalizing..."

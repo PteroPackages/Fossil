@@ -7,6 +7,11 @@ module Fossil::Models
     include YAML::Serializable
   end
 
+  struct Wrap(T) < BaseModel
+    property object : String
+    property attributes : T
+  end
+
   struct User < BaseModel
     property id : Int64
     property external_id : String?
