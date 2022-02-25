@@ -3,10 +3,10 @@ require "yaml"
 
 module Fossil
   class Config
-    property domain      : String
-    property auth        : String
-    property archive_dir : String
-    property file_format : String
+    property domain        : String
+    property auth          : String
+    property archive_dir   : String
+    property file_format   : String
     property export_format : String
     @@debug = false
 
