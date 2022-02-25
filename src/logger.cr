@@ -35,6 +35,10 @@ module Fossil
       end
     end
 
+    def self.banner
+      STDOUT.puts "Fossil archive manager v#{VERSION}".colorize(:dark_gray).to_s
+    end
+
     def self.info(messages : Array(String))
       self.write messages, :blue
     end
