@@ -27,7 +27,8 @@ module Fossil::Commands
         end
 
         Logger.info "finalizing..."
-        File.write path, parsed.to_json
+        archive = Models::Archive(Models::User).new parsed, ["users"]
+        File.write path, archive.to_json
         Logger.success [
           "request complete! archive can be found here:",
           path.to_s
