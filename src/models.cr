@@ -12,12 +12,12 @@ module Fossil::Models
     property attributes : T
   end
 
-  struct Archive(T) < Base
+  struct Archive < Base
     property created_at   : String
-    property object_types : Array(String)
-    property data         : Array(T)
+    property scopes       : Array(String)
+    property users        : Array(User)?
 
-    def initialize(@data, @object_types)
+    def initialize(@scopes)
       @created_at = Time.utc.to_s "%s"
     end
   end
