@@ -1,8 +1,8 @@
 require "colorize"
 require "option_parser"
 require "./commands/**"
+require "./log/**"
 require "./config.cr"
-require "./logger.cr"
 require "./models.cr"
 require "./requests.cr"
 
