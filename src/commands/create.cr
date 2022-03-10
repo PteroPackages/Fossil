@@ -39,11 +39,13 @@ module Fossil::Commands
 
       archive = Models::Archive.new @scopes
       @scopes.each do |scope|
-        Logger.info "creating archives for " + scope
+        Logger.info "creating archive for " + scope
 
         case scope
         when "users"
           archive.users = exec_users
+        when "servers"
+          archive.servers = exec_servers
         end
       end
 
@@ -56,7 +58,7 @@ module Fossil::Commands
     end
 
     def exec_users : Array(Models::User)
-      Logger.info "fetching metadata..."
+      Logger.info "fetching data..."
 
       res = @request.get "/api/application/users"
       Logger.info "received payload: %d bytes" % res.bytesize
@@ -74,6 +76,28 @@ module Fossil::Commands
       rescue ex
         Logger.error ex
         [] of Models::User
+      end
+    end
+
+    def exec_servers : Array(Models::Server)
+      Logger.info "fetching data..."
+
+      res = @request.get "/api/application/servers"
+      Logger.info "received payload: %d bytes" % res.bytesize
+
+      begin
+        parsed = Array(Models::Server).new
+        servers = Array(Models::Wrap(Models::Server)).from_json res, root: "data"
+
+        servers.each_with_index do |server, index|
+          Logger.info "parsing object (%d/%d)" % [index + 1, servers.size]
+          parsed << server.attributes
+        end
+
+        parsed
+      rescue ex
+        Logger.error ex
+        [] of Models::Server
       end
     end
   end

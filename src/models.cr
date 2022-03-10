@@ -16,6 +16,7 @@ module Fossil::Models
     property created_at   : String
     property scopes       : Array(String)
     property users        : Array(User)?
+    property servers      : Array(Server)?
 
     def initialize(@scopes)
       @created_at = Time.utc.to_s "%s"
@@ -36,5 +37,43 @@ module Fossil::Models
     property two_factor   : Bool
     property created_at   : Time
     property updated_at   : Time?
+  end
+
+  struct Server < Base
+    property id             : Int64
+    property external_id    : String?
+    property uuid           : String
+    property identifier     : String
+    property name           : String
+    property description    : String?
+    property suspended      : Bool
+    property limits         : ServerLimits
+    property feature_limits : Hash(String, Int64)
+    property user           : Int64
+    property node           : Int64
+    property allocation     : Int64
+    property nest           : Int64
+    property egg            : Int64
+    @[JSON::Field(ignore: true)]
+    property pack           : Nil
+    property container      : ServerContainer
+    property created_at     : Time
+    property updated_at     : Time?
+  end
+
+  struct ServerLimits < Base
+    property memory  : Int64
+    property swap    : Int64
+    property disk    : Int64
+    property io      : Int64
+    property cpu     : Int64
+    property threads : String?
+  end
+
+  struct ServerContainer < Base
+    property startup_command : String
+    property image           : String
+    property installed       : Int64
+    property environment     : Hash(String, String | Int64)
   end
 end
