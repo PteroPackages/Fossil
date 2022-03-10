@@ -5,3 +5,4 @@
 /tests/
 *.dwarf
 shard.lock
+run.cr
