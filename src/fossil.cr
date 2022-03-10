@@ -63,12 +63,14 @@ module Fossil
         exit 0
       end
 
+      parser.invalid_option {}
+
       parser.unknown_args do |args, options|
         self.send_help! unless args[0]?
 
         case args[0]
         when "create"
-          Commands::Create.run args[1..], opts
+          Commands::Create.new args[1..], opts
         when "compare"
           # TODO
           exit
@@ -82,7 +84,7 @@ module Fossil
           # TODO
           exit
         when "config"
-          Commands::ConfigSetup.run args[1..], opts
+          Commands::ConfigSetup.new args[1..], opts
         when "version"
           puts "Fossil #{VERSION}"
           exit 0

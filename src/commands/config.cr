@@ -1,6 +1,6 @@
 module Fossil::Commands
   class ConfigSetup
-    def self.run(args : Array(String), opts : CmdOptions)
+    def initialize(args, opts)
       send_help! unless args[0]?
 
       case args[0]
@@ -21,7 +21,7 @@ module Fossil::Commands
       exit 0
     end
 
-    def self.send_help!
+    def send_help!
       puts <<-HELP
       Commands for managing the Fossil config
 
@@ -42,7 +42,7 @@ module Fossil::Commands
       exit 0
     end
 
-    def self.show_config
+    def show_config
       cfg = Config.fetch
 
       puts <<-CFG
@@ -54,7 +54,7 @@ module Fossil::Commands
       CFG
     end
 
-    def self.init_config(debug)
+    def init_config(debug)
       Logger.info "attempting to create config"
       Config.init debug
       Logger.info "created new fossil config"
