@@ -7,9 +7,27 @@ module Fossil::Models
     include YAML::Serializable
   end
 
+  struct Response < Base
+    @[JSON::Field(ignore: "object")]
+    property object : Nil
+    @[JSON::Field(ignore: "data")]
+    property data : Nil
+    @[JSON::Field(key: "pagination", root: "meta")]
+    property meta : MetaData?
+  end
+
   struct Wrap(T) < Base
     property object     : String
     property attributes : T
+  end
+
+  struct MetaData < Base
+    property total        : Int64
+    property count        : Int64
+    property per_page     : Int64
+    property current_page : Int64
+    property total_pages  : Int64
+    property links        : Hash(String, String)
   end
 
   struct Archive < Base
@@ -23,6 +41,7 @@ module Fossil::Models
     end
   end
 
+  @[JSON::Field(root: "data")]
   struct User < Base
     property id           : Int64
     property external_id  : String?

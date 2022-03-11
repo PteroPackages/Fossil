@@ -59,17 +59,19 @@ module Fossil::Commands
 
     def exec_users : Array(Models::User)
       Logger.info "fetching data..."
-
-      res = @request.get "/api/application/users"
-      Logger.info "received payload: %d bytes" % res.bytesize
+      res = @request.loop_get "/api/application/users"
+      Logger.info "received payload: %d bytes" % res.map(&.bytesize).reduce { |a, i| a + i }
 
       begin
         parsed = Array(Models::User).new
-        users = Array(Models::Wrap(Models::User)).from_json res, root: "data"
+        res.each_with_index do |str, page|
+          Logger.info "loading page (%d/%d)" % [page + 1, res.size]
 
-        users.each_with_index do |user, index|
-          Logger.info "parsing object (%d/%d)" % [index + 1, users.size]
-          parsed << user.attributes
+          users = Array(Models::Wrap(Models::User)).from_json str, root: "data"
+          users.each_with_index do |user, index|
+            Logger.info "parsing object (%d/%d)" % [index + 1, users.size]
+            parsed << user.attributes
+          end
         end
 
         parsed
@@ -81,17 +83,19 @@ module Fossil::Commands
 
     def exec_servers : Array(Models::Server)
       Logger.info "fetching data..."
-
-      res = @request.get "/api/application/servers"
-      Logger.info "received payload: %d bytes" % res.bytesize
+      res = @request.loop_get "/api/application/servers"
+      Logger.info "received payload: %d bytes" % res.map(&.bytesize).reduce { |a, i| a + i }
 
       begin
         parsed = Array(Models::Server).new
-        servers = Array(Models::Wrap(Models::Server)).from_json res, root: "data"
+        res.each_with_index do |str, page|
+          Logger.info "loading page (%d/%d)" % [page + 1, res.size]
 
-        servers.each_with_index do |server, index|
-          Logger.info "parsing object (%d/%d)" % [index + 1, servers.size]
-          parsed << server.attributes
+          servers = Array(Models::Wrap(Models::Server)).from_json str, root: "data"
+          servers.each_with_index do |server, index|
+            Logger.info "parsing object (%d/%d)" % [index + 1, servers.size]
+            parsed << server.attributes
+          end
         end
 
         parsed
