@@ -4,5 +4,8 @@
 /.shards/
 /tests/
 *.dwarf
+*.exe
+
+fossil
 shard.lock
 run.cr
