@@ -81,7 +81,8 @@ module Fossil
           # TODO
           exit
         when "delete"
-          Commands::Delete.new args[1..], opts
+          # TODO
+          exit
         when "config"
           Commands::ConfigSetup.new args[1..], opts
         when "version"
