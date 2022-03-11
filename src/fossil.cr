@@ -44,6 +44,7 @@ module Fossil
         --no-color      disables color for logs
         -h, --help      sends help!
         -v, --version   shows the current version
+
     HELP
 
     exit 0
