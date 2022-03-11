@@ -35,6 +35,7 @@ module Fossil::Models
     property scopes       : Array(String)
     property users        : Array(User)?
     property servers      : Array(Server)?
+    property nodes        : Array(Node)?
 
     def initialize(@scopes)
       @created_at = Time.utc.to_s "%s"
@@ -94,5 +95,28 @@ module Fossil::Models
     property image           : String
     property installed       : Int64
     property environment     : Hash(String, String | Int64)
+  end
+
+  struct Node < Base
+    property id                   : Int64
+    property uuid                 : String
+    property public               : Bool
+    property name                 : String
+    property description          : String?
+    property location_id          : Int64
+    property fqdn                 : String
+    property scheme               : String
+    property behind_proxy         : Bool
+    property maintenance_mode     : Bool
+    property memory               : Int64
+    property memory_overallocate  : Int64
+    property disk                 : Int64
+    property disk_overallocate    : Int64
+    property upload_size          : Int64
+    property daemon_listen        : Int64
+    property daemon_sftp          : Int64
+    property daemon_base          : String
+    property created_at           : Time
+    property updated_at           : Time?
   end
 end

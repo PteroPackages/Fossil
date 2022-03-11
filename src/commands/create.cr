@@ -14,6 +14,7 @@ module Fossil::Commands
       OptionParser.parse(args) do |parser|
         parser.on("-u", "--users", "") { @scopes << "users" }
         parser.on("-s", "--servers", "") { @scopes << "servers" }
+        parser.on("-n", "--nodes", "") { @scopes << "nodes" }
 
         parser.unknown_args do |unknown, _|
           if unknown.size != 0
@@ -46,6 +47,8 @@ module Fossil::Commands
           archive.users = exec_users
         when "servers"
           archive.servers = exec_servers
+        when "nodes"
+          archive.nodes = exec_nodes
         end
       end
 
@@ -102,6 +105,30 @@ module Fossil::Commands
       rescue ex
         Logger.error ex
         [] of Models::Server
+      end
+    end
+
+    def exec_nodes : Array(Models::Node)
+      Logger.info "fetching data..."
+      res = @request.loop_get "/api/application/nodes"
+      Logger.info "received payload: %d bytes" % res.map(&.bytesize).reduce { |a, i| a + i }
+
+      begin
+        parsed = Array(Models::Node).new
+        res.each_with_index do |str, page|
+          Logger.info "loading page (%d/%d)" % [page + 1, res.size]
+
+          nodes = Array(Models::Wrap(Models::Node)).from_json str, root: "data"
+          nodes.each_with_index do |node, index|
+            Logger.info "parsing object (%d/%d)" % [index + 1, nodes.size]
+            parsed << node.attributes
+          end
+        end
+
+        parsed
+      rescue ex
+        Logger.error ex
+        [] of Models::Node
       end
     end
   end
