@@ -8,10 +8,6 @@ module Fossil::Models
   end
 
   struct Response < Base
-    @[JSON::Field(ignore: "object")]
-    property object : Nil
-    @[JSON::Field(ignore: "data")]
-    property data : Nil
     @[JSON::Field(key: "pagination", root: "meta")]
     property meta : MetaData?
   end
@@ -42,7 +38,6 @@ module Fossil::Models
     end
   end
 
-  @[JSON::Field(root: "data")]
   struct User < Base
     property id           : Int64
     property external_id  : String?

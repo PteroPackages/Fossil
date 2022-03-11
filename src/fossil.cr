@@ -22,8 +22,8 @@ module Fossil
     end
   end
 
-  def self.send_help!
-    puts <<-HELP
+  def self.send_help
+    STDOUT << <<-HELP
     Usage:
         fossil [options] <command> [args]
 
@@ -57,16 +57,15 @@ module Fossil
       parser.on("--trace", "traces error sources") { opts.trace = true }
       parser.on("--verbose", "enables verbose logging") { opts.verbose = true }
       parser.on("--no-color", "disables color for logs") { opts.no_color = true }
-      parser.on("-h", "--help", "sends help!") { send_help! }
+      parser.on("-h", "--help", "sends help!") { send_help }
       parser.on("-v", "--version", "shows the current version") do
         puts "Fossil #{VERSION}"
         exit 0
       end
 
       parser.invalid_option {}
-
       parser.unknown_args do |args, options|
-        self.send_help! unless args[0]?
+        self.send_help unless args[0]?
 
         case args[0]
         when "create"

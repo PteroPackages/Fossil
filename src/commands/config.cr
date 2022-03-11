@@ -1,7 +1,7 @@
 module Fossil::Commands
   class ConfigSetup
     def initialize(args, opts)
-      send_help! unless args[0]?
+      send_help unless args[0]?
 
       case args[0]
       when "show"
@@ -21,22 +21,21 @@ module Fossil::Commands
       exit 0
     end
 
-    def send_help!
-      puts <<-HELP
+    def send_help
+      STDOUT << <<-HELP
       Commands for managing the Fossil config
 
       Usage:
           fossil config [options] <command>
 
       SubCommands:
-          show
-          init
-          set
-          reset
+          show    shows the current config
+          init    initializes a new config
+          set     sets a key in the config
+          reset   resets the config setup
 
       Options:
-          -f, --force
-          -h, --help
+          -f, --force don't prompt the user to continue
       HELP
 
       exit 0

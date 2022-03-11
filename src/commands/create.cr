@@ -12,13 +12,15 @@ module Fossil::Commands
       @debug = options.debug
 
       OptionParser.parse(args) do |parser|
-        parser.on("-u", "--users", "") { @scopes << "users" }
-        parser.on("-s", "--servers", "") { @scopes << "servers" }
-        parser.on("-n", "--nodes", "") { @scopes << "nodes" }
+        parser.on("-u", "--users", "archives all user accounts") { @scopes << "users" }
+        parser.on("-s", "--servers", "archives all servers") { @scopes << "servers" }
+        parser.on("-n", "--nodes", "archives all nodes") { @scopes << "nodes" }
 
         parser.unknown_args do |unknown, _|
           if unknown.size != 0
-            Logger.error %(unknown option#{unknown.size > 1 ? "s" : ""}: "#{unknown.join("\", ")}"), true
+            Logger.error %(unknown option#{
+              unknown.size > 1 ? "s" : ""
+            }: "#{unknown.join("\", ")}"), true
           end
         end
       end

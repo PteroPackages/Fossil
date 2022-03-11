@@ -19,8 +19,17 @@ module Fossil
     end
 
     def get(path : String) : String
-      res = Crest.get(@domain + path, headers: @@headers)
-      res.body
+      begin
+        res = Crest.get(@domain + path, headers: @@headers)
+        res.body
+      rescue ex : Crest::RequestFailed
+        Logger.error [
+          ex.message,
+          "make sure that your credentials are up to date, ",
+          "and your pterodactyl instance is up to date and working"
+        ], true
+        ""
+      end
     end
 
     def loop_get(path : String) : Array(String)
