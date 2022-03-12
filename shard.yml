@@ -1,17 +1,19 @@
 name: fossil
-version: 0.1.0
+description: A Pterodactyl archive manager
+version: 0.2.0
+crystal: 1.3.2
+
+repository: https://github.com/PteroPackages/Fossil
 
 authors:
   - Devonte <https://github.com/devnote-dev>
 
-targets:
-  fossil:
-    main: src/fossil.cr
-
-crystal: 1.3.2
-
 dependencies:
   crest:
     github: mamantoha/crest
+
+targets:
+  fossil:
+    main: src/fossil.cr
 
 license: MIT
