@@ -44,7 +44,7 @@ module Fossil::Commands
     def show_config
       cfg = Config.fetch
 
-      puts <<-CFG
+      STDOUT << <<-CFG
       domain:  #{cfg.domain}
       api key: #{cfg.auth}
       archive dir: #{cfg.archive_dir}

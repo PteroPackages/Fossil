@@ -31,7 +31,7 @@ module Fossil::Commands
       end
 
       @config = Config.fetch
-      @request = Request.configure @config
+      @request = Request.new @config
       run
     end
 

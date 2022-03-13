@@ -53,7 +53,7 @@ module Fossil
       {% if flag?(:win32) %}
       basedir = "C:\\Program Files\\Fossil"
       {% else %}
-      basedir = "~/fossil"
+      basedir = "/usr/etc/fossil"
       {% end %}
 
       log_debug ["creating new Fossil workspace:", basedir]

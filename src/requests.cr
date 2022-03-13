@@ -14,10 +14,6 @@ module Fossil
       @@headers["Authorization"] = "Bearer " + config.auth
     end
 
-    def self.configure(config)
-      new config
-    end
-
     def get(path : String) : String
       begin
         res = Crest.get(@domain + path, headers: @@headers)
