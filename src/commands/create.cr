@@ -1,4 +1,5 @@
 require "option_parser"
+require "../models.cr"
 
 module Fossil::Commands
   class Create
@@ -62,76 +63,34 @@ module Fossil::Commands
       ]
     end
 
-    def exec_users : Array(Models::User)
+    {% for key, model in {
+      "users" => Models::User,
+      "servers" => Models::Server,
+      "nodes" => Models::Node
+    } %}
+    def exec_{{ key.id }} : Array({{ model }})
       Logger.info "fetching data..."
-      res = @request.loop_get "/api/application/users"
+      res = @request.loop_get "/api/application/{{ key.id }}"
       Logger.info "received payload: %d bytes" % res.map(&.bytesize).reduce { |a, i| a + i }
 
       begin
-        parsed = Array(Models::User).new
+        parsed = Array({{ model }}).new
         res.each_with_index do |str, page|
           Logger.info "loading page (%d/%d)" % [page + 1, res.size]
 
-          users = Array(Models::Wrap(Models::User)).from_json str, root: "data"
-          users.each_with_index do |user, index|
-            Logger.info "parsing object (%d/%d)" % [index + 1, users.size]
-            parsed << user.attributes
+          obj = Array(Models::Wrap({{ model }})).from_json str, root: "data"
+          obj.each_with_index do |o, i|
+            Logger.info "parsing object (%d/%d)" % [i + 1, obj.size]
+            parsed << o.attributes
           end
         end
 
         parsed
       rescue ex
         Logger.error ex
-        [] of Models::User
+        [] of {{ model }}
       end
     end
-
-    def exec_servers : Array(Models::Server)
-      Logger.info "fetching data..."
-      res = @request.loop_get "/api/application/servers"
-      Logger.info "received payload: %d bytes" % res.map(&.bytesize).reduce { |a, i| a + i }
-
-      begin
-        parsed = Array(Models::Server).new
-        res.each_with_index do |str, page|
-          Logger.info "loading page (%d/%d)" % [page + 1, res.size]
-
-          servers = Array(Models::Wrap(Models::Server)).from_json str, root: "data"
-          servers.each_with_index do |server, index|
-            Logger.info "parsing object (%d/%d)" % [index + 1, servers.size]
-            parsed << server.attributes
-          end
-        end
-
-        parsed
-      rescue ex
-        Logger.error ex
-        [] of Models::Server
-      end
-    end
-
-    def exec_nodes : Array(Models::Node)
-      Logger.info "fetching data..."
-      res = @request.loop_get "/api/application/nodes"
-      Logger.info "received payload: %d bytes" % res.map(&.bytesize).reduce { |a, i| a + i }
-
-      begin
-        parsed = Array(Models::Node).new
-        res.each_with_index do |str, page|
-          Logger.info "loading page (%d/%d)" % [page + 1, res.size]
-
-          nodes = Array(Models::Wrap(Models::Node)).from_json str, root: "data"
-          nodes.each_with_index do |node, index|
-            Logger.info "parsing object (%d/%d)" % [index + 1, nodes.size]
-            parsed << node.attributes
-          end
-        end
-
-        parsed
-      rescue ex
-        Logger.error ex
-        [] of Models::Node
-      end
-    end
+    {% end %}
   end
 end
