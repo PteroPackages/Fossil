@@ -32,6 +32,7 @@ module Fossil::Models
     property users        : Array(User)?
     property servers      : Array(Server)?
     property nodes        : Array(Node)?
+    property locations    : Array(Location)?
 
     def initialize(@scopes)
       @created_at = Time.utc.to_s "%s"
@@ -113,5 +114,13 @@ module Fossil::Models
     property daemon_base          : String
     property created_at           : Time
     property updated_at           : Time?
+  end
+
+  struct Location < Base
+    property id         : Int64
+    property short      : String
+    property long       : String
+    property created_at : Time
+    property updated_at : Time?
   end
 end
