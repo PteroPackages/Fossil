@@ -1,13 +1,12 @@
 require "colorize"
 require "option_parser"
 require "./commands/**"
-require "./config.cr"
 require "./logger.cr"
 require "./models.cr"
 require "./requests.cr"
 
 module Fossil
-  VERSION = "0.1.0"
+  VERSION = "0.2.0"
 
   Colorize.on_tty_only!
 
@@ -83,10 +82,9 @@ module Fossil
         when "delete"
           Commands::Delete.new args[1..], opts
         when "config"
-          Commands::ConfigSetup.new args[1..], opts
+          Commands::Config.new args[1..], opts
         when "version"
           puts "Fossil #{VERSION}"
-          exit 0
         else
           puts "error: unknown command '#{args[0]}'"
           exit 1

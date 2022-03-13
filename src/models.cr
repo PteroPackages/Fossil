@@ -7,6 +7,13 @@ module Fossil::Models
     include YAML::Serializable
   end
 
+  struct Config < Base
+    property domain   : String
+    property auth     : String
+    property archive  : String
+    property formats  : Hash(String, String)
+  end
+
   struct Response < Base
     @[JSON::Field(key: "pagination", root: "meta")]
     property meta : MetaData?

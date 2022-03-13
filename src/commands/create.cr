@@ -4,7 +4,7 @@ require "../models.cr"
 module Fossil::Commands
   class Create
     property scopes  : Array(String)
-    property config  : Config
+    property config  : Models::Config
     property request : Request
     property debug   : Bool
 
@@ -31,15 +31,15 @@ module Fossil::Commands
         Logger.error "at least 1 scope must be provided to archive", true
       end
 
-      @config = Config.fetch
+      @config = Config.get_config
       @request = Request.new @config
       run
     end
 
     def run
-      path = Path.new config.archive_dir, Time.utc.to_s "%F"
+      path = Path.new config.archive, Time.utc.to_s "%F"
       Dir.mkdir_p path
-      path /= Time.utc.to_s "%s.json"
+      path /= Time.utc.to_s "%s.#{@config.formats["file"]}"
       Logger.banner
 
       archive = Models::Archive.new @scopes
@@ -59,7 +59,15 @@ module Fossil::Commands
       end
 
       Logger.info "finalizing..."
-      File.write path, archive.to_json
+      case @config.formats["file"]
+      when "json"
+        File.write path, archive.to_json
+      when "yaml"
+        File.write path, archive.to_yaml
+      else
+        Logger.error "invalid file format '#{@config.formats["file"]}'", true
+      end
+
       Logger.success [
         "request complete! archive can be found here:",
         path.to_s
