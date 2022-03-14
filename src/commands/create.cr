@@ -62,7 +62,7 @@ module Fossil::Commands
       case @config.formats["file"]
       when "json"
         File.write path, archive.to_json
-      when "yaml"
+      when "yaml", "yml"
         File.write path, archive.to_yaml
       else
         Logger.error "invalid file format '#{@config.formats["file"]}'", true
