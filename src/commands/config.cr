@@ -39,11 +39,11 @@ module Fossil::Commands
 
     def self.get_config : Models::Config
       unless path = ENV["FOSSIL_PATH"]?
-        Logger.error "not set", true
+        Logger.error "environment variable 'FOSSIL_PATH' is not set", true
       end
 
       unless File.exists? path.not_nil!
-        Logger.error "not exist", true
+        Logger.error "environment variable 'FOSSIL_PATH' is an invalid path", true
       end
 
       file = File.read Path[path.not_nil!].join "config.yml"
