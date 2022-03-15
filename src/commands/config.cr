@@ -7,8 +7,7 @@ module Fossil::Commands
       when "show"
         show_config
       when "set"
-        # TODO
-        exit
+        set_config args
       when "init"
         init_config
       when "reset"
@@ -58,11 +57,12 @@ module Fossil::Commands
       cfg = self.class.get_config
 
       STDOUT << <<-CFG
-      domain:  #{cfg.domain}
-      api key: #{cfg.auth}
+      domain:      #{cfg.domain}
+      api key:     #{cfg.auth}
       archive dir: #{cfg.archive}
-      default file format: #{cfg.formats["file"]}
+      default file format:   #{cfg.formats["file"]}
       default export format: #{cfg.formats["export"]}
+
       CFG
     end
 
@@ -85,6 +85,54 @@ module Fossil::Commands
       tmpl = ECR.render "#{__DIR__}/../config.tmpl.ecr"
       path = Path.new basedir, "config.yml"
       File.write path, tmpl
+    end
+
+    def set_config(args)
+      key, value = args[1]?, args[2]?
+      unless key && value
+        STDOUT << <<-HELP
+        Usage:
+            fossil config set <key> <value>
+
+        Options:
+            domain          the domain url of the panel
+            auth            the application api key
+            archive         the path to the archive directory
+            formats.file    the file format to save archives
+            formats.export  the file format to export archives
+
+        HELP
+
+        exit 0
+      end
+
+      unless ["domain", "auth", "archive", "formats.file", "formats.export"].includes? key.downcase
+        Logger.error "invalid config option '#{key}'", true
+      end
+
+      case key.downcase
+      when "archive"
+        unless Dir.exists? value
+          Logger.error "invalid archive directory", true
+        end
+
+      when "formats.file"
+        unless ["json", "yaml", "yml"].includes? value.downcase
+          Logger.error "invalid file format '#{value}'", true
+        end
+
+      when "formats.export"
+        unless value.downcase == "zip"
+          Logger.error "only zip is currently supported for exports", true
+        end
+      end
+
+      config = self.class.get_config
+      config[key] = value
+      path = Path[config.archive].join "config.yml"
+      File.write path, config.to_yaml
+
+      Logger.success "updated the config"
     end
   end
 end

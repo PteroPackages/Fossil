@@ -12,6 +12,23 @@ module Fossil::Models
     property auth     : String
     property archive  : String
     property formats  : Hash(String, String)
+
+    def []=(key, value)
+      case key.downcase
+      when "domain"
+        @domain = value
+      when "auth"
+        @auth = value
+      when "archive"
+        @archive = value
+      when "formats.file"
+        @formats["file"] = value
+      when "formats.export"
+        @formats["export"] = value
+      else
+        raise "unknown config key"
+      end
+    end
   end
 
   struct Response < Base
