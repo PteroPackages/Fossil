@@ -9,15 +9,12 @@ module Fossil::Commands
       when "set"
         set_config args
       when "init"
-        init_config
+        init_config nil
       when "reset"
-        # TODO
-        exit
+        reset_config
       else
         Logger.error "unknown subcommand '#{args[0]}'", true
       end
-
-      exit 0
     end
 
     def send_help
@@ -66,7 +63,7 @@ module Fossil::Commands
       CFG
     end
 
-    def init_config
+    def init_config(dir : String?)
       unless File.exists? "#{__DIR__}/../config.tmpl.ecr"
         Logger.error [
           "missing template confir ecr file to continue",
@@ -75,16 +72,22 @@ module Fossil::Commands
       end
 
       basedir : String
-      {% if flag?(:win32) %}
-      basedir = "C:\\Program Files\\Fossil"
-      {% else %}
-      basedir = "/usr/etc/fossil"
-      {% end %}
+      if dir.nil?
+        {% if flag?(:win32) %}
+        basedir = "C:\\Program Files\\Fossil"
+        {% else %}
+        basedir = "/usr/lib/fossil"
+        {% end %}
+      else
+        basedir = dir
+      end
 
-      Dir.mkdir basedir
+      Dir.mkdir_p(basedir) unless Dir.exists? basedir
       tmpl = ECR.render "#{__DIR__}/../config.tmpl.ecr"
-      path = Path.new basedir, "config.yml"
+      path = Path[basedir].join "config.yml"
       File.write path, tmpl
+
+      Logger.success ["created a new config file at:", path.to_s]
     end
 
     def set_config(args)
@@ -133,6 +136,21 @@ module Fossil::Commands
       File.write path, config.to_yaml
 
       Logger.success "updated the config"
+    end
+
+    def reset_config
+      if path = ENV["FOSSIL_PATH"]?
+        file = Path[path].join("config.yml").to_s
+        if File.exists? file
+          begin
+            File.delete file
+          rescue ex
+            Logger.error ex.to_s, true
+          end
+        end
+      end
+
+      init_config path
     end
   end
 end
