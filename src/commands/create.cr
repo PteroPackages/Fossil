@@ -16,7 +16,9 @@ module Fossil::Commands
         parser.on("-u", "--users", "archives all user accounts") { @scopes << "users" }
         parser.on("-s", "--servers", "archives all servers") { @scopes << "servers" }
         parser.on("-n", "--nodes", "archives all nodes") { @scopes << "nodes" }
-        parser.on("-l", "--location", "archives all node locations") { @scopes << "locations" }
+        parser.on("-l", "--locations", "archives all node locations") { @scopes << "locations" }
+        parser.on("--nests", "archives all nests (without eggs)") { @scopes << "nests" }
+        # parser.on("--nests-eggs", "archives all nests with eggs") { @scopes << "eggs" }
 
         parser.unknown_args do |unknown, _|
           if unknown.size != 0
@@ -55,6 +57,8 @@ module Fossil::Commands
           archive.nodes = exec_nodes
         when "locations"
           archive.locations = exec_locations
+        when "nests"
+          archive.nests = exec_nests
         end
       end
 
@@ -78,7 +82,8 @@ module Fossil::Commands
       "users" => Models::User,
       "servers" => Models::Server,
       "nodes" => Models::Node,
-      "locations" => Models::Location
+      "locations" => Models::Location,
+      "nests" => Models::Nest
     } %}
     def exec_{{ key.id }} : Array({{ model }})
       Logger.info "fetching data..."

@@ -57,6 +57,7 @@ module Fossil::Models
     property servers      : Array(Server)?
     property nodes        : Array(Node)?
     property locations    : Array(Location)?
+    property nests        : Array(Nest)?
 
     def initialize(@scopes)
       @created_at = Time.utc.to_s "%s"
@@ -146,5 +147,31 @@ module Fossil::Models
     property long       : String
     property created_at : Time
     property updated_at : Time?
+  end
+
+  # struct Eggs < Base
+  #   property id : Int64
+  #   property uuid : String
+  #   property name : String
+  #   property nest : Int64
+  #   property author : String
+  #   property description : String
+  #   property docker_image : String
+  #   @[JSON::Field(ignore: true)]
+  #   property config : Nil
+  #   property startup : String
+  #   property script : Hash(String, String | Bool | Nil)
+  #   property created_at : Time
+  #   property updated_at : Time?
+  # end
+
+  struct Nest < Base
+    property id           : Int64
+    property uuid         : String
+    property author       : String
+    property name         : String
+    property description  : String
+    property created_at   : Time
+    property updated_at   : Time?
   end
 end
