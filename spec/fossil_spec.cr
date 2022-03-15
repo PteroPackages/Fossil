@@ -1,7 +1,7 @@
 require "./spec_helper"
 
 describe Fossil do
-  options = Fossil::CmdOptions.new true, true, true, true
+  options = Fossil::CmdOptions.new true, true
 
   it "sets the environment variable" do
     {% if flag?(:win32) %}
@@ -12,10 +12,10 @@ describe Fossil do
   end
 
   it "initializes the config" do
-    Fossil::Commands::ConfigSetup.new ["init"], options
+    Fossil::Commands::Config.new ["init"], options
   end
 
   it "fetches the config" do
-    Fossil::Commands::ConfigSetup.new ["show"], options
+    Fossil::Commands::Config.new ["show"], options
   end
 end
