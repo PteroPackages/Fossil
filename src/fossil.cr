@@ -4,6 +4,7 @@ require "./commands/**"
 require "./logger.cr"
 require "./models.cr"
 require "./requests.cr"
+require "./xml.cr"
 
 module Fossil
   VERSION = "0.2.0"

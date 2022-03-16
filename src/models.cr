@@ -74,7 +74,7 @@ module Fossil::Models
     property last_name    : String
     property language     : String
     property root_admin   : Bool
-    @[JSON::Field(key: "2fa")]
+    @[JSON::Field(key: "2fa", ignore_serialize: true)] # TEMP
     property two_factor   : Bool
     property created_at   : Time
     property updated_at   : Time?

@@ -68,6 +68,8 @@ module Fossil::Commands
         File.write path, archive.to_json
       when "yaml", "yml"
         File.write path, archive.to_yaml
+      when "xml"
+        File.write path, XMLFmt.serialize archive.to_json
       else
         Logger.error "invalid file format '#{@config.formats["file"]}'", true
       end
