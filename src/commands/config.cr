@@ -50,6 +50,15 @@ module Fossil::Commands
       Models::Config.from_yaml file
     end
 
+    def self.clear_cache
+      cfg = get_config
+      if Dir.exists? cfg.cache_dir
+        Dir.glob("#{cfg.cache_dir}#{File::SEPARATOR}*") { |f| File.delete f }
+      else
+        Dir.mkdir_p cfg.cache_dir
+      end
+    end
+
     def show_config
       cfg = self.class.get_config
 
