@@ -37,18 +37,15 @@ module Fossil::Commands
 
     def run(args)
       files = if args[0].includes? '*'
-        Dir.glob Path[@config.archive_dir].join args[0]
+        Dir.glob Path[@config.export_dir].join args[0]
       else
-        [File.expand_path args[0], @config.archive_dir]
-      end
-      puts files
-      files = files.select! { |f| f.ends_with? ".gz" }
+        [File.expand_path(args[0], @config.export_dir)]
+      end.select! { |f| f.ends_with? ".gz" }
 
       Logger.error("no files found", true) if files.size == 0
       Logger.info "#{files.size} file(s) found"
 
-      cache = Path[@config.archive_dir].join "cache"
-      Dir.mkdir_p(cache) unless Dir.exists? cache
+      Config.clear_cache
       restored = 0
 
       files.each_with_index do |file, index|
@@ -56,8 +53,10 @@ module Fossil::Commands
 
         begin
           data = Compress::Gzip::Reader.open(file) { |gz| gz.gets_to_end }
-          fp = Path[cache].join Path.new(file).basename[..-3]
+          old = Path.new file
+          fp = Path[@config.cache_dir].join old.basename[..-4]
           File.write fp, data
+          File.delete old
           restored += 1
         rescue
           Logger.error "failed to restore archive; skipping"
@@ -66,7 +65,7 @@ module Fossil::Commands
 
       Logger.success [
         "restored #{restored} archive(s) at:",
-        cache.to_s
+        @config.cache_dir
       ]
     end
   end
