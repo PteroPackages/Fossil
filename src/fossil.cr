@@ -26,7 +26,7 @@ module Fossil
 
     Commands:
         create    creates a new archive
-        compare   compares the current archives
+        list      lists the stored archives
         restore   restores (or decompresses) an archive
         prune     removes archives matching a filter
         delete    removes a specified archive
@@ -64,9 +64,8 @@ module Fossil
         case args[0]
         when "create"
           Commands::Create.new args[1..], opts
-        when "compare"
-          # TODO
-          exit
+        when "list"
+          Commands::List.new args[1..], opts
         when "restore"
           Commands::Restore.new args[1..], opts
         when "prune"
