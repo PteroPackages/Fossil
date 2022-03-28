@@ -97,10 +97,10 @@ module Fossil::Commands
         "format: dir_index:file_index (e.g. 2:3)"
       ] unless base && index
 
-      dirs = Dir.glob("#{@config.archive}#{File::SEPARATOR}*").select! { |f| Dir.exists? f }
+      dirs = Dir.glob("#{@config.archive_dir}#{File::SEPARATOR}*").select! { |f| Dir.exists? f }
       Logger.error("directory index out of range (#{base}/#{dirs.size - 1})", true) unless dirs[base]?
 
-      full = Path[@config.archive].join(dirs[base]).to_s
+      full = Path[@config.archive_dir].join(dirs[base]).to_s
       files = Dir.glob "#{full}#{File::SEPARATOR}*"
       Logger.error("file index out of range (#{index}/#{files.size - 1})", true) unless files[index]?
 
@@ -126,11 +126,11 @@ module Fossil::Commands
       case path
       when /16\d{8}(?:\.json)?/
         path += ".json" unless path.ends_with? ".json"
-        res = File.expand_path path, @config.archive
+        res = File.expand_path path, @config.archive_dir
 
         unless File.exists? res
           if @recursive
-            res = resolve_recursive @config.archive, path
+            res = resolve_recursive @config.archive_dir, path
             return res if res.size != 0
           else
             Logger.error [
@@ -145,12 +145,12 @@ module Fossil::Commands
         end
 
       when /\d{4}-\d{2}-\d{2}\/\*/
-        res = File.expand_path path, @config.archive
+        res = File.expand_path path, @config.archive_dir
         return Dir.glob(res) if Dir.exists? res[..-2]
         [] of String
 
       when /\d{4}-\d{2}-\d{2}\/16\d{8}(?:\.json)?/
-        res = File.expand_path path, @config.archive
+        res = File.expand_path path, @config.archive_dir
         return [res] if File.exists? res
         [] of String
 

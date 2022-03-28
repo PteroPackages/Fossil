@@ -43,9 +43,9 @@ module Fossil::Commands
     end
 
     def run
-      path = Path.new config.archive, Time.utc.to_s "%F"
+      path = Path.new (@preserve ? config.archive_dir : config.export_dir), Time.utc.to_s "%F"
       Dir.mkdir_p path
-      path /= Time.utc.to_s "%s.#{@config.formats["file"]}"
+      path /= Time.utc.to_s "%s.#{@config.format}"
       Logger.banner
 
       archive = Models::Archive.new @scopes
@@ -67,7 +67,7 @@ module Fossil::Commands
       end
 
       Logger.info "finalizing..."
-      case @config.formats["file"]
+      case @config.format
       when "json"
         File.write path, archive.to_json
       when "yaml", "yml"
@@ -76,7 +76,7 @@ module Fossil::Commands
         # File.write path, XMLFmt.serialize archive.to_json
         raise "xml format not currently supported"
       else
-        Logger.error "invalid file format '#{@config.formats["file"]}'", true
+        Logger.error "invalid file format '#{@config.format}'", true
       end
 
       path = compress(path) unless @preserve

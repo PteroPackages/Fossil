@@ -2,15 +2,12 @@
 version: <%= VERSION %>
 domain: ""
 auth: ""
-archive: <%= basedir %>
-formats:
-  file: json
-  export: zip
+format: json
+archive_dir: <%= archive_dir %>
+export_dir: <%= export_dir %>
+cache_dir: <%= cache_dir %>
 
 # supported file formats:
 # - json
 # - yaml
 # - xml
-#
-# supported export formats:
-# - zip

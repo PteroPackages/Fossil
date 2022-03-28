@@ -8,23 +8,34 @@ module Fossil::Models
   end
 
   struct Config < Base
-    property domain   : String
-    property auth     : String
-    property archive  : String
-    property formats  : Hash(String, String)
+    property domain       : String
+    property auth         : String
+    property format       : String
+    property archive_dir  : String
+    property export_dir   : String
+    property cache_dir    : String
+
+    def []?(key : String) : String?
+      case key.downcase
+      when "domain"      then @domain
+      when "auth"        then @auth
+      when "format"      then @format
+      when "archive_dir" then @archive_dir
+      when "export_dir"  then @export_dir
+      when "cache_dir"   then @cache_dir
+      else
+        nil
+      end
+    end
 
     def []=(key, value)
       case key.downcase
-      when "domain"
-        @domain = value
-      when "auth"
-        @auth = value
-      when "archive"
-        @archive = value
-      when "formats.file"
-        @formats["file"] = value
-      when "formats.export"
-        @formats["export"] = value
+      when "domain"      then @domain = value
+      when "auth"        then @auth = value
+      when "format"      then @format = value
+      when "archive_dir" then @archive_dir = value
+      when "export_dir"  then @export_dir = value
+      when "cache_dir"   then @export_dir = value
       else
         raise "unknown config key"
       end

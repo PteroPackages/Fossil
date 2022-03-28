@@ -56,9 +56,10 @@ module Fossil::Commands
       STDOUT << <<-CFG
       domain:      #{cfg.domain}
       api key:     #{cfg.auth}
-      archive dir: #{cfg.archive}
-      default file format:   #{cfg.formats["file"]}
-      default export format: #{cfg.formats["export"]}
+      file format: #{cfg.format}
+      archive dir: #{cfg.archive_dir}
+      export dir:  #{cfg.export_dir}
+      cache dir:   #{cfg.cache_dir}
 
       CFG
     end
@@ -82,12 +83,20 @@ module Fossil::Commands
         basedir = dir
       end
 
-      Dir.mkdir_p(basedir) unless Dir.exists? basedir
-      tmpl = ECR.render "#{__DIR__}/../config.tmpl.ecr"
-      path = Path[basedir].join "config.yml"
-      File.write path, tmpl
+      archive_dir = Path[basedir].join "archive"
+      export_dir = Path[basedir].join "export"
+      cache_dir = Path[basedir].join "cache"
+      [basedir, archive_dir, export_dir, cache_dir].each do |path|
+        Dir.mkdir_p(path) unless Dir.exists? path
+      end
 
-      Logger.success ["created a new config file at:", path.to_s]
+      tmpl = ECR.render "#{__DIR__}/../config.tmpl.ecr"
+      File.write Path[basedir].join("config.yml"), tmpl
+
+      Logger.success [
+        "created a new fossil space at:",
+        File.expand_path basedir
+      ]
     end
 
     def set_config(args)
@@ -98,42 +107,38 @@ module Fossil::Commands
             fossil config set <key> <value>
 
         Options:
-            domain          the domain url of the panel
-            auth            the application api key
-            archive         the path to the archive directory
-            formats.file    the file format to save archives
-            formats.export  the file format to export archives
+            domain        the domain url of the panel
+            auth          the application api key
+            archive       the path to the archive directory
+            format        the file format to write archives
+            archive_dir   the path to the archive directory
+            export_dir    the path to the exports directory
+            cache_dir     the path to the cache directory
 
         HELP
 
-        exit 0
+        exit
       end
 
-      unless ["domain", "auth", "archive", "formats.file", "formats.export"].includes? key.downcase
+      cfg = self.class.get_config
+      unless cfg[key]?
         Logger.error "invalid config option '#{key}'", true
       end
 
       case key.downcase
-      when "archive"
-        unless Dir.exists? value
-          Logger.error "invalid archive directory", true
-        end
-
-      when "formats.file"
+      when "format"
         unless ["json", "yaml", "yml"].includes? value.downcase
           Logger.error "invalid file format '#{value}'", true
         end
-
-      when "formats.export"
-        unless value.downcase == "zip"
-          Logger.error "only zip is currently supported for exports", true
+      when "archive_dir", "export_dir", "cache_dir"
+        unless Dir.exists? value
+          Logger.error "invalid #{key[..-4]} directory", true
         end
       end
 
-      config = self.class.get_config
-      config[key] = value
-      path = Path[config.archive].join "config.yml"
-      File.write path, config.to_yaml
+      cfg[key] = value
+      path = Path[ENV["FOSSIL_PATH"]].join "config.yml"
+      File.write path, cfg.to_yaml
 
       Logger.success "updated the config"
     end

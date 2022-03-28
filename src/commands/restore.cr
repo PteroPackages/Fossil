@@ -37,9 +37,9 @@ module Fossil::Commands
 
     def run(args)
       files = if args[0].includes? '*'
-        Dir.glob Path[@config.archive].join args[0]
+        Dir.glob Path[@config.archive_dir].join args[0]
       else
-        [File.expand_path args[0], @config.archive]
+        [File.expand_path args[0], @config.archive_dir]
       end
       puts files
       files = files.select! { |f| f.ends_with? ".gz" }
@@ -47,7 +47,7 @@ module Fossil::Commands
       Logger.error("no files found", true) if files.size == 0
       Logger.info "#{files.size} file(s) found"
 
-      cache = Path[@config.archive].join "cache"
+      cache = Path[@config.archive_dir].join "cache"
       Dir.mkdir_p(cache) unless Dir.exists? cache
       restored = 0
 
