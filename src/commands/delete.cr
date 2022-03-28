@@ -22,7 +22,7 @@ module Fossil::Commands
 
       HELP
 
-      exit 0
+      exit
     end
 
     def initialize(args, opts)
@@ -127,7 +127,6 @@ module Fossil::Commands
       when /16\d{8}(?:\.json)?/
         path += ".json" unless path.ends_with? ".json"
         res = File.expand_path path, @config.archive_dir
-
         unless File.exists? res
           if @recursive
             res = resolve_recursive @config.archive_dir, path
@@ -138,22 +137,18 @@ module Fossil::Commands
               "use '--recursive' or '-r' to perform deep search"
             ], true
           end
-
           [] of String
         else
           [res]
         end
-
       when /\d{4}-\d{2}-\d{2}\/\*/
         res = File.expand_path path, @config.archive_dir
         return Dir.glob(res) if Dir.exists? res[..-2]
         [] of String
-
       when /\d{4}-\d{2}-\d{2}\/16\d{8}(?:\.json)?/
         res = File.expand_path path, @config.archive_dir
         return [res] if File.exists? res
         [] of String
-
       else
         Logger.error "invalid file or directory path", true
         # for type checking

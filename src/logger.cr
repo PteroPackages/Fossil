@@ -31,9 +31,9 @@ module Fossil
       end
 
       if color == :red
-        STDERR.puts result
+        STDERR << result
       else
-        STDOUT.puts result
+        STDOUT << result
       end
     end
 

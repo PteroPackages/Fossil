@@ -34,7 +34,7 @@ module Fossil::Commands
           -f, --force don't prompt the user to continue
       HELP
 
-      exit 0
+      exit
     end
 
     def self.get_config : Models::Config
@@ -96,7 +96,11 @@ module Fossil::Commands
       export_dir = Path[basedir].join "export"
       cache_dir = Path[basedir].join "cache"
       [basedir, archive_dir, export_dir, cache_dir].each do |path|
-        Dir.mkdir_p(path) unless Dir.exists? path
+        begin
+          Dir.mkdir_p(path) unless Dir.exists? path
+        rescue ex
+          Logger.error ex.to_s, true
+        end
       end
 
       tmpl = ECR.render "#{__DIR__}/../config.tmpl.ecr"

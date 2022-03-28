@@ -42,7 +42,7 @@ module Fossil
 
     HELP
 
-    exit 0
+    exit
   end
 
   def self.run
@@ -86,7 +86,7 @@ module Fossil
       end
     end
 
-    exit 0
+    exit
   end
 end
 
