@@ -27,7 +27,7 @@ module Fossil
     Commands:
         create    creates a new archive
         compare   compares the current archives
-        export    exports an archive as a zip file
+        restore   restores (or decompresses) an archive
         prune     removes archives matching a filter
         delete    removes a specified archive
         config    manages the fossil config
@@ -68,7 +68,7 @@ module Fossil
         when "compare"
           # TODO
           exit
-        when "export"
+        when "restore"
           # TODO
           exit
         when "prune"
