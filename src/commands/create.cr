@@ -1,15 +1,18 @@
+require "compress/gzip"
 require "option_parser"
 require "../models.cr"
 
 module Fossil::Commands
   class Create
-    property scopes  : Array(String)
-    property config  : Models::Config
-    property request : Request
-    property debug   : Bool
+    property scopes   : Array(String)
+    property preserve : Bool
+    property config   : Models::Config
+    property request  : Request
+    property debug    : Bool
 
     def initialize(args, options)
       @scopes = [] of String
+      @preserve = false
       @debug = options.debug
 
       OptionParser.parse(args) do |parser|
@@ -19,6 +22,7 @@ module Fossil::Commands
         parser.on("-l", "--locations", "archives all node locations") { @scopes << "locations" }
         parser.on("--nests", "archives all nests (without eggs)") { @scopes << "nests" }
         # parser.on("--nests-eggs", "archives all nests with eggs") { @scopes << "eggs" }
+        parser.on("-p", "--preserve", "preserve the archive (no compression)") { @preserve = true }
 
         parser.unknown_args do |unknown, _|
           if unknown.size != 0
@@ -69,15 +73,32 @@ module Fossil::Commands
       when "yaml", "yml"
         File.write path, archive.to_yaml
       when "xml"
-        File.write path, XMLFmt.serialize archive.to_json
+        # File.write path, XMLFmt.serialize archive.to_json
+        raise "xml format not currently supported"
       else
         Logger.error "invalid file format '#{@config.formats["file"]}'", true
       end
+
+      path = compress(path) unless @preserve
 
       Logger.success [
         "request complete! archive can be found here:",
         path.to_s
       ]
+    end
+
+    def compress(path)
+      fp = Path.new path.to_s + ".gz"
+      File.open(path) do |file|
+        File.open(fp, "w") do |gzip|
+          Compress::Gzip::Writer.open(gzip) do |gz|
+            IO.copy(file, gz)
+            gz.close
+          end
+        end
+      end
+      File.delete path
+      fp
     end
 
     {% for key, model in {
