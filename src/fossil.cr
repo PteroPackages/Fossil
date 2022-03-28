@@ -20,7 +20,7 @@ module Fossil
   end
 
   def self.send_help
-    STDOUT << <<-HELP
+    STDOUT.puts <<-HELP
     Usage:
         fossil [options] <command> [args]
 
@@ -39,7 +39,6 @@ module Fossil
         --no-color      disables color for logs
         -h, --help      sends help!
         -v, --version   shows the current version
-
     HELP
 
     exit
@@ -54,8 +53,8 @@ module Fossil
       parser.on("--no-color", "disables color for logs") { Colorize.enabled = false }
       parser.on("-h", "--help", "sends help!") { send_help }
       parser.on("-v", "--version", "shows the current version") do
-        puts "Fossil #{VERSION}"
-        exit 0
+        STDOUT.puts "Fossil #{VERSION}"
+        exit
       end
 
       parser.invalid_option {}
@@ -78,10 +77,9 @@ module Fossil
         when "config"
           Commands::Config.new args[1..], opts
         when "version"
-          puts "Fossil #{VERSION}"
+          STDOUT.puts "Fossil #{VERSION}"
         else
-          puts "error: unknown command '#{args[0]}'"
-          exit 1
+          Logger.error "unknown command '#{args[0]}'", true
         end
       end
     end

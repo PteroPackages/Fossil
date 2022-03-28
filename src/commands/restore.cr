@@ -8,13 +8,12 @@ module Fossil::Commands
     property dir     : String
 
     def send_help
-      STDOUT << <<-HELP
+      STDOUT.puts <<-HELP
       Usage:
           fossil restore <file_pattern>
 
           file_pattern must be a file path or directory pattern
           example: "2022-02-02/*"
-
       HELP
 
       exit

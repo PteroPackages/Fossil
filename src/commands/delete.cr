@@ -8,7 +8,7 @@ module Fossil::Commands
     property force     : Bool
 
     def send_help
-      STDOUT << <<-HELP
+      STDOUT.puts <<-HELP
       Usage:
           fossil delete [options] <file_pattern>
 
@@ -19,7 +19,6 @@ module Fossil::Commands
           --verbose       use verbose logging
           -r, --recursive recursively search for the file
           -f, --force     don't prompt the user to continue
-
       HELP
 
       exit

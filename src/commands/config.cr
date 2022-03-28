@@ -18,7 +18,7 @@ module Fossil::Commands
     end
 
     def send_help
-      STDOUT << <<-HELP
+      STDOUT.puts <<-HELP
       Commands for managing the Fossil config
 
       Usage:
@@ -62,7 +62,7 @@ module Fossil::Commands
     def show_config
       cfg = self.class.get_config
 
-      STDOUT << <<-CFG
+      STDOUT.puts <<-CFG
       domain:      #{cfg.domain}
       api key:     #{cfg.auth}
       file format: #{cfg.format}
@@ -115,7 +115,7 @@ module Fossil::Commands
     def set_config(args)
       key, value = args[1]?, args[2]?
       unless key && value
-        STDOUT << <<-HELP
+        STDOUT.puts <<-HELP
         Usage:
             fossil config set <key> <value>
 
