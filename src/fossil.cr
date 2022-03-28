@@ -69,8 +69,7 @@ module Fossil
           # TODO
           exit
         when "restore"
-          # TODO
-          exit
+          Commands::Restore.new args[1..], opts
         when "prune"
           # TODO
           exit
