@@ -4,7 +4,6 @@ require "./commands/**"
 require "./logger.cr"
 require "./models.cr"
 require "./requests.cr"
-require "./xml.cr"
 
 module Fossil
   VERSION = "0.2.0"
@@ -28,7 +27,6 @@ module Fossil
         create    creates a new archive
         list      lists the stored archives
         restore   restores (or decompresses) an archive
-        prune     removes archives matching a filter
         delete    removes a specified archive
         config    manages the fossil config
         version   shows the current version
@@ -68,9 +66,6 @@ module Fossil
           Commands::List.new args[1..], opts
         when "restore"
           Commands::Restore.new args[1..], opts
-        when "prune"
-          # TODO
-          exit
         when "delete"
           Commands::Delete.new args[1..], opts
         when "config"
