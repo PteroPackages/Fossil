@@ -1,89 +1,51 @@
-require "colorize"
 require "option_parser"
-require "./commands/**"
-require "./logger.cr"
-require "./models.cr"
-require "./requests.cr"
+require "./commands/*"
+require "./log.cr"
 
 module Fossil
-  VERSION = "0.2.0"
-
-  Colorize.on_tty_only!
-
-  struct CmdOptions
-    property debug : Bool
-    property trace : Bool
-
-    def initialize(@debug = false, @trace = false)
-    end
-  end
+  VERSION = "0.3.0"
 
   def self.send_help
-    STDOUT.puts <<-HELP
+    puts <<-HELP
     Usage:
-        fossil [options] <command> [args]
+        fossil [flags] <command> [args]
 
     Commands:
-        create    creates a new archive
-        list      lists the stored archives
-        restore   restores (or decompresses) an archive
-        delete    removes a specified archive
-        config    manages the fossil config
-        version   shows the current version
+        list
+        get
+        create
+        restore
+        delete
+        help
+        config
 
     Options:
-        --debug         logs debug messages
-        --trace         traces error sources
-        --no-color      disables color for logs
-        -h, --help      sends help!
-        -v, --version   shows the current version
+        -h, --help
+        -v, --version
     HELP
 
     exit
   end
 
   def self.run
-    opts = CmdOptions.new
-
     OptionParser.parse do |parser|
-      parser.on("--debug", "logs debug messages") { opts.debug = true }
-      parser.on("--trace", "traces error sources") { opts.trace = true }
-      parser.on("--no-color", "disables color for logs") { Colorize.enabled = false }
-      parser.on("-h", "--help", "sends help!") { send_help }
-      parser.on("-v", "--version", "shows the current version") do
-        STDOUT.puts "Fossil #{VERSION}"
-        exit
-      end
+      parser.on("-h", "--help", "sends help information") { send_help }
+      parser.on("-v", "--version", "sends the fossil version") { puts "fossil version "+ VERSION; exit }
+      parser.on("config", "config management commands") { Commands::Config.run ARGV[1..] }
 
-      parser.invalid_option {}
       parser.unknown_args do |args, _|
-        self.send_help unless args[0]?
-
-        case args[0]
-        when "create"
-          Commands::Create.new args[1..], opts
-        when "list"
-          Commands::List.new args[1..], opts
-        when "restore"
-          Commands::Restore.new args[1..], opts
-        when "delete"
-          Commands::Delete.new args[1..], opts
-        when "config"
-          Commands::Config.new args[1..], opts
-        when "version"
-          STDOUT.puts "Fossil #{VERSION}"
-        else
-          Logger.error "unknown command '#{args[0]}'", true
-        end
+        send_help if args.empty?
+        Log.fatal [
+          "unknown option '#{args.join}'",
+          "run 'fossil --help' for more information"
+        ]
       end
     end
-
-    exit
   end
 end
 
 begin
   Fossil.run
 rescue ex
-  Fossil::Logger.error ex
+  Fossil::Log.fatal ex
 end

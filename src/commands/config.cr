@@ -1,174 +1,126 @@
+require "option_parser"
+
 module Fossil::Commands
-  class Config
-    def initialize(args, opts)
-      send_help unless args[0]?
+  private struct Conf
+    property domain : String
+    property key    : String
 
-      case args[0]
-      when "show"
-        show_config
-      when "set"
-        set_config args
-      when "init"
-        init_config nil
-      when "reset"
-        reset_config
-      else
-        Logger.error "unknown subcommand '#{args[0]}'", true
-      end
+    def initialize(@domain = "", @key = "")
     end
+  end
 
-    def send_help
-      STDOUT.puts <<-HELP
-      Commands for managing the Fossil config
+  class Config
+    PATH = "/usr/local/etc/fossil.conf"
 
+    @@force = false
+
+    def self.send_help
+      puts <<-HELP
       Usage:
-          fossil config [options] <command>
-
-      SubCommands:
-          show    shows the current config
-          init    initializes a new config
-          set     sets a key in the config
-          reset   resets the config setup
+          fossil config [options]
 
       Options:
-          -f, --force don't prompt the user to continue
+          -i, --init
+          -f, --force
+          --domain <url>
+          --key <key>
+          -h, --help
       HELP
 
       exit
     end
 
-    def self.get_config : Models::Config
-      unless path = ENV["FOSSIL_PATH"]?
-        Logger.error "environment variable 'FOSSIL_PATH' is not set", true
+    def self.run(args)
+      OptionParser.parse(args) do |parser|
+        parser.on("-h", "--help", "sends help information") { send_help }
+        parser.on("-f", "--force", "force overwrite the config") { @@force = true }
+        parser.on("-i", "--init", "initializes a new config file") { init }
+        parser.on("--domain <url>", "sets the domain for pterodactyl") { |v| set_domain v }
+        parser.on("--key <key>", "sets the account api key") { |v| set_key v }
+
+        parser.missing_option { |op| Log.fatal "missing option #{op} <...>" }
       end
 
-      unless File.exists? path.not_nil!
-        Logger.error "environment variable 'FOSSIL_PATH' is an invalid path", true
-      end
-
-      file = File.read Path[path.not_nil!].join "config.yml"
-      Models::Config.from_yaml file
+      cfg = read_config
+      cfg.domain = "<not set>" if cfg.domain.empty?
+      cfg.key = "<not set>" if cfg.key.empty?
+      puts "domain: #{cfg.domain}\nkey: #{cfg.key}"
+      exit
     end
 
-    def self.clear_cache
-      cfg = get_config
-      if Dir.exists? cfg.cache_dir
-        Dir.glob("#{cfg.cache_dir}#{File::SEPARATOR}*") { |f| File.delete f }
-      else
-        Dir.mkdir_p cfg.cache_dir
-      end
-    end
-
-    def show_config
-      cfg = self.class.get_config
-
-      STDOUT.puts <<-CFG
-      domain:      #{cfg.domain}
-      api key:     #{cfg.auth}
-      file format: #{cfg.format}
-      archive dir: #{cfg.archive_dir}
-      export dir:  #{cfg.export_dir}
-      cache dir:   #{cfg.cache_dir}
-
-      CFG
-    end
-
-    def init_config(dir : String?)
-      unless File.exists? "#{__DIR__}/../config.tmpl.ecr"
-        Logger.error [
-          "missing template confir ecr file to continue",
-          "please reinstall Fossil to fix this, or manually add the file"
-        ], true
-      end
-
-      basedir : String
-      if dir.nil?
-        {% if flag?(:win32) %}
-        basedir = "C:\\Program Files\\Fossil"
-        {% else %}
-        basedir = "/usr/lib/fossil"
-        {% end %}
-      else
-        basedir = dir
-      end
-
-      archive_dir = Path[basedir].join "archive"
-      export_dir = Path[basedir].join "export"
-      cache_dir = Path[basedir].join "cache"
-      [basedir, archive_dir, export_dir, cache_dir].each do |path|
-        begin
-          Dir.mkdir_p(path) unless Dir.exists? path
-        rescue ex
-          Logger.error ex.to_s, true
+    def self.init
+      if File.exists? PATH
+        unless @@force
+          Log.error [
+            "config file already exists",
+            "path: " + PATH
+          ]
+          Log.info "use the '--force' option to force overwrite"
+          exit 1
         end
       end
 
-      tmpl = ECR.render "#{__DIR__}/../config.tmpl.ecr"
-      File.write Path[basedir].join("config.yml"), tmpl
-
-      Logger.success [
-        "created a new fossil space at:",
-        File.expand_path basedir
-      ]
-    end
-
-    def set_config(args)
-      key, value = args[1]?, args[2]?
-      unless key && value
-        STDOUT.puts <<-HELP
-        Usage:
-            fossil config set <key> <value>
-
-        Options:
-            domain        the domain url of the panel
-            auth          the application api key
-            archive       the path to the archive directory
-            format        the file format to write archives
-            archive_dir   the path to the archive directory
-            export_dir    the path to the exports directory
-            cache_dir     the path to the cache directory
-
-        HELP
-
+      begin
+        File.write PATH, "domain=\nkey="
         exit
+      rescue File::AccessDeniedError
+        Log.error "missing permissions to write to config path"
+        Log.info [
+          " possible solutions:",
+          "  sudo chmod 775 /bin/fossil",
+          "  touch #{PATH} (if not exists)",
+          "  chmod 666 #{PATH}"
+        ]
+        exit
+      rescue ex
+        Log.error "failed to write to config"
+        Log.fatal ex
       end
-
-      cfg = self.class.get_config
-      unless cfg[key]?
-        Logger.error "invalid config option '#{key}'", true
-      end
-
-      case key.downcase
-      when "format"
-        unless ["json", "yaml", "yml"].includes? value.downcase
-          Logger.error "invalid file format '#{value}'", true
-        end
-      when "archive_dir", "export_dir", "cache_dir"
-        unless Dir.exists? value
-          Logger.error "invalid #{key[..-4]} directory", true
-        end
-      end
-
-      cfg[key] = value
-      path = Path[ENV["FOSSIL_PATH"]].join "config.yml"
-      File.write path, cfg.to_yaml
-
-      Logger.success "updated the config"
     end
 
-    def reset_config
-      if path = ENV["FOSSIL_PATH"]?
-        file = Path[path].join("config.yml").to_s
-        if File.exists? file
-          begin
-            File.delete file
-          rescue ex
-            Logger.error ex.to_s, true
-          end
-        end
+    private def self.read_config
+      unless File.exists? PATH
+        Log.fatal [
+          "config file does not exist (path: #{PATH})",
+          "run 'fossil config init' to create one"
+        ]
       end
 
-      init_config path
+      begin
+        data = File.read PATH
+      rescue ex
+        Log.fatal ex
+      end
+
+      cfg = Conf.new
+      cfg.domain = data.lines.find("domain=") { |line| line.starts_with? "domain=" }[7..]
+      cfg.key = data.lines.find("key=") { |line| line.starts_with? "key=" }[4..]
+
+      cfg
+    end
+
+    def self.set_domain(url)
+      cfg = read_config
+      cfg.domain = url
+
+      begin
+        File.write PATH, "domain=#{cfg.domain}\nkey=#{cfg.key}"
+        exit
+      rescue ex
+        Log.fatal ex
+      end
+    end
+
+    def self.set_key(key)
+      cfg = read_config
+      cfg.key = key
+
+      begin
+        File.write PATH, "domain=#{cfg.domain}\nkey=#{cfg.key}"
+        exit
+      rescue ex
+        Log.fatal ex
+      end
     end
   end
 end
