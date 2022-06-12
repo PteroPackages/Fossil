@@ -1,7 +1,7 @@
 require "option_parser"
 
 module Fossil::Commands
-  private struct Conf
+  struct Conf
     property domain : String
     property key    : String
 
@@ -78,7 +78,7 @@ module Fossil::Commands
       end
     end
 
-    private def self.read_config
+    def self.read_config
       unless File.exists? PATH
         Log.fatal [
           "config file does not exist (path: #{PATH})",
