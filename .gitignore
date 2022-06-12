@@ -3,9 +3,11 @@
 /bin/
 /.shards/
 /tests/
+
 *.dwarf
+*.sh
+*.cmd
 *.exe
 
 fossil
 shard.lock
-run.cr
