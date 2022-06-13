@@ -1,26 +1,34 @@
 require "option_parser"
 
 module Fossil::Commands
+  # Handles deleting backups on servers.
   class Delete
     @@server = ""
     @@id = ""
 
+    # :nodoc:
     def self.send_help
       puts <<-HELP
+      Handles deleting backups on servers.
+
       Usage:
-          fossil delete [options] <server>
+          fossil delete <server> [--id <id>] [-h|--help]
+
+      Arguments:
+          server      the identifier of the server
 
       Options:
-          --id <id>
-          -h, --help
+          --id <id>   the identifier or uuid of the backup
+          -h, --help  send help information
       HELP
 
       exit
     end
 
+    # :nodoc:
     def self.run(args)
       OptionParser.parse(args) do |parser|
-        parser.on("-h", "--help", "sends help information") { send_help }
+        parser.on("-h", "--help", "send help information") { send_help }
         parser.on("--id <id>", "the identifier or uuid of the backup") { |v| @@id = v }
 
         parser.missing_option { |op| Log.fatal "missing option #{op} <...>" }
@@ -29,7 +37,7 @@ module Fossil::Commands
           when 0
             Log.fatal [
               "missing server identifier to download from",
-              "run 'fossil get --help' for more information"
+              "run 'fossil delete --help' for more information"
             ]
           when 1
             @@server = args[0]

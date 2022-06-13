@@ -1,6 +1,7 @@
 require "option_parser"
 
 module Fossil::Commands
+  # Gets the status and specific information about a backup.
   class Status
     @@server = ""
     @@id = ""
@@ -8,23 +9,31 @@ module Fossil::Commands
 
     def self.send_help
       puts <<-HELP
+      Gets the status and specific information about a backup.
+
       Usage:
-          fossil status [options] <server> <id>
+          fossil status <server> [--id <id>] [-f|--first]
+                                  [-l|--last] [-h|--help]
+
+      Arguments:
+          server      the identifier of the server
 
       Options:
-          -f, --first
-          -l, --last
-          -h, --help
+          --id <id>   the identifier or uuid of the backup
+          -f, --first get the first backup's status
+          -l, --last  get the last backup's status
+          -h, --help  send help information
       HELP
 
       exit
     end
 
+    # :nodoc:
     def self.run(args)
       OptionParser.parse(args) do |parser|
-        parser.on("-h", "--help", "sends help information") { send_help }
-        parser.on("-f", "--first", "gets the status of the first backup") { @@op = :first }
-        parser.on("-l", "--last", "gets the status of the last backup") { @@op = :last }
+        parser.on("-h", "--help", "send help information") { send_help }
+        parser.on("-f", "--first", "get the first backup's status") { @@op = :first }
+        parser.on("-l", "--last", "get the last backup's status") { @@op = :last }
 
         parser.missing_option { |op| Log.fatal "missing option #{op} <...>" }
         parser.unknown_args do |args, _|

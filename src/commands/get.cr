@@ -1,6 +1,7 @@
 require "option_parser"
 
 module Fossil::Commands
+  # Manages backup download processes.
   class Get
     PATH = "/var/fossil/archives"
 
@@ -8,25 +9,32 @@ module Fossil::Commands
     @@id = ""
     @@download = true
 
+    # :nodoc:
     def self.send_help
       puts <<-HELP
+      Manages backup download processes.
+
       Usage:
-          fossil get [options] <server>
+          fossil get <server> [--id <id>] [-u|--url-only] [-h|--help]
+
+      Arguments:
+          server          the identifier of the server
 
       Options:
-          --id <id>
-          -u, --url-only
-          -h, --help
+          --id <id>       the identifier or uuid of the backup
+          -u, --url-only  only return the download url(s)
+          -h, --help      send help information
       HELP
 
       exit
     end
 
+    # :nodoc:
     def self.run(args)
       OptionParser.parse(args) do |parser|
-        parser.on("-h", "--help", "sends help information") { send_help }
+        parser.on("-h", "--help", "send help information") { send_help }
         parser.on("--id <id>", "the identifier or uuid of the backup") { |v| @@id = v }
-        parser.on("-u", "--url-only", "only return the download urls") { @@download = false }
+        parser.on("-u", "--url-only", "only return the download url(s)") { @@download = false }
 
         parser.missing_option { |op| Log.fatal "missing option #{op} <...>" }
         parser.unknown_args do |args, _|
@@ -119,6 +127,8 @@ module Fossil::Commands
       end
     end
 
+    # Writes the buffered data to the archive path.
+    # TODO: maybe add a limit to this?
     private def self.write(dl)
       path = Path[PATH].join Time.utc.to_s "%F"
       Dir.mkdir_p(path) unless Dir.exists? path

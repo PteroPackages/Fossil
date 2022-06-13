@@ -9,34 +9,40 @@ module Fossil::Commands
     end
   end
 
+  # Manages the Fossil configuration file.
   class Config
     PATH = "/etc/fossil.conf"
 
     @@force = false
 
+    # :nodoc:
     def self.send_help
       puts <<-HELP
+      Manages the Fossil configuration file.
+
       Usage:
-          fossil config [options]
+          fossil config [-d|--domain <url>] [-k|--key <key>]
+                        [-f|--force] [-i|--init] [-h|--help]
 
       Options:
-          -i, --init
-          -f, --force
-          --domain <url>
-          --key <key>
-          -h, --help
+          -i, --init      initialize a new config file
+          -f, --force     force overwrite the existing config
+          --domain <url>  set the domain for pterodactyl
+          --key <key>     set the account api key
+          -h, --help      send help information
       HELP
 
       exit
     end
 
+    # :nodoc:
     def self.run(args)
       OptionParser.parse(args) do |parser|
-        parser.on("-h", "--help", "sends help information") { send_help }
+        parser.on("-h", "--help", "send help information") { send_help }
         parser.on("-f", "--force", "force overwrite the config") { @@force = true }
-        parser.on("-i", "--init", "initializes a new config file") { init }
-        parser.on("--domain <url>", "sets the domain for pterodactyl") { |v| set_domain v }
-        parser.on("--key <key>", "sets the account api key") { |v| set_key v }
+        parser.on("-i", "--init", "initialize a new config file") { init }
+        parser.on("--domain <url>", "set the domain for pterodactyl") { |v| set_domain v }
+        parser.on("--key <key>", "set the account api key") { |v| set_key v }
 
         parser.missing_option { |op| Log.fatal "missing option #{op} <...>" }
       end
@@ -44,10 +50,14 @@ module Fossil::Commands
       cfg = read_config
       cfg.domain = "<not set>" if cfg.domain.empty?
       cfg.key = "<not set>" if cfg.key.empty?
-      puts "domain: #{cfg.domain}\nkey: #{cfg.key}"
+      puts "domain: #{cfg.domain}\nkey:    #{cfg.key}"
       exit
     end
 
+    # Initializes a new configuration file at the default `PATH`.
+    # Unfortunately, this is prone to error since the binary/executable will likely not
+    # have the necessary permissions to read and write at this path, so stricter system
+    # checks will need to be added for better safety.
     def self.init
       if File.exists? PATH
         unless @@force
@@ -78,6 +88,7 @@ module Fossil::Commands
       end
     end
 
+    # Reads the config file and returns the domain and api key.
     def self.read_config
       unless File.exists? PATH
         Log.fatal [
@@ -99,6 +110,9 @@ module Fossil::Commands
       cfg
     end
 
+    # Sets the domain for Fossil to use
+    #
+    # TODO: add validation
     def self.set_domain(url)
       cfg = read_config
       cfg.domain = url
@@ -111,6 +125,7 @@ module Fossil::Commands
       end
     end
 
+    # Sets the api key for Fossil to use
     def self.set_key(key)
       cfg = read_config
       cfg.key = key

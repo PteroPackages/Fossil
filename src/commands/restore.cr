@@ -1,33 +1,43 @@
 require "option_parser"
 
 module Fossil::Commands
+  # Restores backups to servers.
   class Restore
     @@server = ""
     @@id = ""
     @@op = :none
 
+    # :nodoc:
     def self.send_help
       puts <<-HELP
+      Restores backups to servers.
+
       Usage:
-          fossil restore [options] <server>
+          fossil restore <server> [--id <id>] [-f|--first] [-l|--last]
+                                  [-r|--random] [-h|--help]
+
+      Arguments:
+          server        the identifier of the server
 
       Options:
-          --id <id>
-          -f, --first
-          -l, --last
-          -r, --random
+          --id <id>     the identifier or uuid of the backup
+          -f, --first   restore the first available backup
+          -l, --last    restore the last available backup
+          -r, --random  restore a random available backup
+          -h, --help    send help information
       HELP
 
       exit
     end
 
+    # :nodoc:
     def self.run(args)
       OptionParser.parse(args) do |parser|
-        parser.on("-h", "--help", "sends help information") { send_help }
+        parser.on("-h", "--help", "send help information") { send_help }
         parser.on("--id <id>", "the identifier or uuid of the backup") { |v| @@id = v }
-        parser.on("-f", "--first", "restores the first backup") { @@op = :first }
-        parser.on("-l", "--last", "restores the last backup") { @@op = :last }
-        parser.on("-r", "--random", "restores a random backup") { @@op = :random }
+        parser.on("-f", "--first", "restore the first available backup") { @@op = :first }
+        parser.on("-l", "--last", "restore the last available backup") { @@op = :last }
+        parser.on("-r", "--random", "restore a random available backup") { @@op = :random }
 
         parser.missing_option { |op| Log.fatal "missing option #{op} <...>" }
         parser.unknown_args do |args, _|
@@ -85,7 +95,7 @@ module Fossil::Commands
         backup = b
       else
         case @@op
-        when :first   then backup = backups[0]
+        when :first   then backup = backups.first
         when :last    then backup = backups.last
         when :random  then backup = backups[rand(backups.size)]
         end

@@ -1,6 +1,7 @@
 require "json"
 
 module Fossil::Models
+  # Represents a fractal single item wrapper object.
   struct ItemWrapper(T)
     include JSON::Serializable
 
@@ -8,6 +9,7 @@ module Fossil::Models
     property attributes : T
   end
 
+  # Represents a fractal list item wrapper object.
   struct DataWrapper(T)
     include JSON::Serializable
 
@@ -15,6 +17,7 @@ module Fossil::Models
     property data   : Array(T)
   end
 
+  # Represents a Pterodactyl API error.
   struct ApiError
     include JSON::Serializable
 
@@ -23,6 +26,7 @@ module Fossil::Models
     property detail : String
   end
 
+  # Represents a server backup.
   struct Backup
     include JSON::Serializable
 
@@ -37,6 +41,7 @@ module Fossil::Models
     property completed_at   : Time?
   end
 
+  # Represents a server (partial data).
   struct Server
     include JSON::Serializable
 
@@ -45,24 +50,30 @@ module Fossil::Models
     property name       : String
   end
 
+  # Represents a signed download URL object.
   struct SignedUrl
     include JSON::Serializable
 
     property url : String
   end
 
+  # Represents a Fossil downloaded file object, containing the file name, size,
+  # and buffered data.
   struct Download
     property name : String
     property size : Int32
 
+    # :nodoc:
     def initialize(@name, @size)
       @data = uninitialized Slice(String)
     end
 
+    # :nodoc:
     def data : Slice(String)
       @data
     end
 
+    # :nodoc:
     def data=(buffer)
       @data = Slice(String).new @size, buffer
     end

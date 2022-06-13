@@ -5,11 +5,13 @@ require "./models.cr"
 module Fossil
   alias M = Models
 
+  # Manages HTTP interactions between Fossil and Pterodactyl/Wings.
   class Http
     property domain  : String
     property key     : String
     property headers : Hash(String, String)
 
+    # :nodoc:
     def initialize(config)
       @domain = config.domain
       @key = config.key
@@ -21,6 +23,7 @@ module Fossil
       }
     end
 
+    # Send a new request with default headers (normally JSON type).
     def request(method, path, body = nil) : String
       req = Crest::Request.new(method,
                               "#{@domain}/api/client#{path}",
@@ -31,6 +34,8 @@ module Fossil
       res.body
     end
 
+    # Handle HTTP errors, either from Pterodactyl/Wings or Crest itself.
+    # This will likely be expanded or rewritten to use the standard HTTP lib.
     private def handle_error(ex : Crest::RequestFailed)
       Log.error ex.message
       exit(1) if ex.response.body.size == 0
@@ -48,6 +53,8 @@ module Fossil
       exit 1
     end
 
+    # Tests the domain for Pterodactyl, if it fails to reach it then nothing
+    # using API requests can be allowed to continue.
     def test_domain : Nil
       begin
         Crest.get("#{@domain}/api/client", headers: @headers)
@@ -56,6 +63,7 @@ module Fossil
       end
     end
 
+    # Gets a list of backups on a specified server.
     def get_backups(id)
       begin
         res = request :get, "/servers/#{id}/backups"
@@ -68,6 +76,10 @@ module Fossil
       end
     end
 
+    # Creates a backup on a specified server.
+    # Note: "ignored" parameter functionality is unknown
+    #
+    # TODO: validate data is properly being sent
     def create_backup(id, name, locked, ignored)
       data = {"name" => name, "is_locked" => locked, "ignored" => ignored}
 
@@ -81,6 +93,7 @@ module Fossil
       end
     end
 
+    # Restores a backup to a server.
     def restore_backup(id, uuid)
       begin
         _ = request :post, "/servers/#{id}/backups/#{uuid}/restore"
@@ -89,6 +102,7 @@ module Fossil
       end
     end
 
+    # Deletes a backup on a server.
     def delete_backup(id, uuid)
       begin
         request :delete, "/servers/#{id}/backups/#{uuid}"
@@ -97,6 +111,8 @@ module Fossil
       end
     end
 
+    # Gets a list of servers the account has access to. This can change
+    # depending on the access type specified (if any).
     def get_servers(access = "")
       query = ""
       unless access.empty?
@@ -113,6 +129,7 @@ module Fossil
       end
     end
 
+    # Gets a server by its identifier.
     def get_server(id)
       begin
         res = request :get, "/servers/#{id}"
@@ -124,6 +141,7 @@ module Fossil
       end
     end
 
+    # Gets a download URL for a backup on a specified server.
     def get_download_url(id, uuid)
       begin
         res = request :get, "/servers/#{id}/backups/#{uuid}/download"
@@ -135,6 +153,8 @@ module Fossil
       end
     end
 
+    # Performs the download request from Wings and saves the buffered data
+    # to a download object (used later on).
     def get_download(url)
       copy_headers = @headers.clone
       copy_headers.delete "Content-Type"

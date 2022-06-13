@@ -1,25 +1,30 @@
 require "option_parser"
 
 module Fossil::Commands
+  # Sends overview details about server backups.
   class List
     PATH = "/var/fossil/archives"
 
     @@access = ""
 
+    # :nodoc:
     def self.send_help
       puts <<-HELP
+      Sends overview details about server backups.
+
       Usage:
-          fossil list [options]
+          fossil list [-a|--all] [-o|--own] [-h|--help]
 
       Options:
-          -a, --all
-          -o, --own
-          -h, --help
+          -a, --all   list all servers the account has access to
+          -o, --own   list all servers the account owns
+          -h, --help  send help information
       HELP
 
       exit
     end
 
+    # :nodoc:
     def self.run(args)
       OptionParser.parse(args) do |parser|
         parser.on("-h", "--help", "sends help information") { send_help }

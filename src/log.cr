@@ -1,10 +1,12 @@
 require "colorize"
 
 module Fossil::Log
+  # We need this for some reason
   Colorize.on_tty_only!
 
   @@stack = [] of String
 
+  # Adds the log to the track stack.
   def self.add(data : String)
     @@stack << Time.utc.to_s "%s: #{data}"
   end
@@ -15,6 +17,8 @@ module Fossil::Log
     "warn" => :yellow,
     "error" => :red
   } %}
+  # Writes a {{level.id}} log to the standard output stream, or standard error
+  # stream for error/fatal logs.
   def self.{{level.id}}(data : String)
     self.add data
     {% if level.id == "error" %}
@@ -24,17 +28,21 @@ module Fossil::Log
     {% end %}
   end
 
+  # :ditto:
   def self.{{level.id}}(data : Array(String))
     data.each { |d| self.{{level.id}} d }
   end
   {% end %}
 
+  # Writes an error log to the standard error stream then terminates the
+  # process (exit code: 1).
   def self.fatal(data : String)
     self.add data
     STDERR.puts "#{"error".colorize(:red)}: #{data}"
     self.try_save
   end
 
+  # :ditto:
   def self.fatal(data : Array(String))
     data.each do |d|
       self.add d
@@ -43,6 +51,7 @@ module Fossil::Log
     self.try_save
   end
 
+  # :ditto:
   def self.fatal(err : Exception)
     STDERR.puts "#{"error".colorize(:red)}: #{err.message || "unknown error"}"
     if trace = err.backtrace
@@ -54,6 +63,7 @@ module Fossil::Log
     self.try_save
   end
 
+  # :hidden:
   def self.try_save
     # TODO
     exit 1

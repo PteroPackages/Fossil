@@ -6,38 +6,43 @@ require "./log.cr"
 module Fossil
   VERSION = "0.3.0"
 
+  # :nodoc:
   def self.send_help
     puts <<-HELP
+    A Pterodactyl Archive Manager
+
     Usage:
-        fossil [flags] <command> [args]
+        fossil [flags...] <command> [args]
 
     Commands:
-        list
-        get
-        create
-        restore
-        delete
-        config
+        list      list available backups
+        get       download tools for backups
+        status    get status information on a backup
+        create    create a backup on a server
+        restore   restore backups on a server
+        delete    delete existing backups
+        config    fossil config control
 
     Options:
-        -h, --help
-        -v, --version
+        -h, --help      send help information
+        -v, --version   send the current version
     HELP
 
     exit
   end
 
+  # :nodoc:
   def self.run
     OptionParser.parse do |parser|
-      parser.on("-h", "--help", "sends help information") { send_help }
-      parser.on("-v", "--version", "sends the fossil version") { puts "fossil version "+ VERSION; exit }
-      parser.on("list", "lists all server backups") { Commands::List.run ARGV[1..] }
-      parser.on("get", "downloads the backups on a server") { Commands::Get.run ARGV[1..] }
-      parser.on("create", "creates a new backup on a server") { Commands::Create.run ARGV[1..] }
-      parser.on("status", "gets the status of a backup on a server") { Commands::Status.run ARGV[1..] }
-      parser.on("restore", "restores a backup to a server") { Commands::Restore.run ARGV[1..] }
-      parser.on("delete", "deletes the backups on a server") { Commands::Delete.run ARGV[1..] }
-      parser.on("config", "config management commands") { Commands::Config.run ARGV[1..] }
+      parser.on("-h", "--help", "send help information") { send_help }
+      parser.on("-v", "--version", "send the current version") { puts "fossil version "+ VERSION; exit }
+      parser.on("list", "list available backups") { Commands::List.run ARGV[1..] }
+      parser.on("get", "download tools for backups") { Commands::Get.run ARGV[1..] }
+      parser.on("create", "create a backup on the server") { Commands::Create.run ARGV[1..] }
+      parser.on("status", "get status information on a backup") { Commands::Status.run ARGV[1..] }
+      parser.on("restore", "restore backups on a server") { Commands::Restore.run ARGV[1..] }
+      parser.on("delete", "delete existing backups") { Commands::Delete.run ARGV[1..] }
+      parser.on("config", "fossil config control") { Commands::Config.run ARGV[1..] }
 
       parser.unknown_args do |args, _|
         send_help if args.empty?
