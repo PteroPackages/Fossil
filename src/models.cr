@@ -18,13 +18,15 @@ module Fossil::Models
   struct Backup
     include JSON::Serializable
 
-    property uuid : String
-    property name : String
-    property ignored_files : Array(String)
-    # property hash : String
-    property bytes : Int64
-    property created_at : Time
-    property completed_at : Time?
+    property uuid           : String
+    property name           : String
+    property is_successful  : Bool
+    property is_locked      : Bool
+    property ignored_files  : Array(String)
+    property checksum       : String?
+    property bytes          : Int64
+    property created_at     : Time
+    property completed_at   : Time?
   end
 
   struct Server
