@@ -65,6 +65,19 @@ module Fossil
       end
     end
 
+    def create_backup(id, name, locked, ignored)
+      data = {"name" => name, "is_locked" => locked, "ignored" => ignored}
+
+      begin
+        res = request :post, "/servers/#{id}/backups", data
+        val = M::ItemWrapper(M::Backup).from_json res
+
+        val.attributes
+      rescue ex : Crest::RequestFailed
+        handle_error ex
+      end
+    end
+
     def get_servers(access = "")
       query = ""
       unless access.empty?
