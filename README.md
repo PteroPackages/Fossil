@@ -1,24 +1,18 @@
 # Fossil
-Fossil is an archive manager for the Pterodactyl game panel, able to archive user accounts, servers, nodes, and more!
+Fossil is a server archive manager for the Pterodactyl Game Panel! Backups can be managed easily with Fossil's simple command system.
 
 ## Installation
-This package is not officially distributed yet so it needs to be build from source. [Crystal](https://crystal-lang.org/install/) v1.3.2 or above is required.
+This package is not officially distributed yet so it needs to be build from source. [Crystal](https://crystal-lang.org/install/) `v1.3.2` or above is required.
 
 1. Clone this repository (`git clone https://github.com/PteroPackages/Fossil.git`)
 2. Build the package (`shards build --production`)
 3. Run it! (`fossil` or `./fossil`)
 
 ## Usage
-Make sure to set the `FOSSIL_PATH` environment variable before doing anything. This is where the config file and error logs directory will be created, it should not be modified unless you know what you're doing.
-
-The help command provides most of the information needed to use Fossil. Note that a lot of commands are not implemented yet including the `config set` command. To update the config, go to the `config.yml` file and edit it manually.
+Fossil uses `/etc/fossil.conf` as the configuration file path and `/var/fossil` for archives, logs and caching. Make sure that these paths exists and that fossil has the necessary permissions to read and write to those paths (or run the `setup.sh` file to do this for you). Apart from this, the `help` command provides information on how to use Fossil.
 
 ## Development
-- [ ] Complete config subcommands
-- [ ] Complete create subcommands
-- [ ] Finalise testing on delete command
-- [ ] Implement a zip manager
-- [ ] Implement compare and prune command argument parsers
+Make sure to run the `setup.sh` file for development. When building binaries/executables, always use `shards build --production`, this will build everything that is necessary with the resulting file being in the `/bin` folder.
 
 ## Contributing
 1. Fork it (<https://github.com/PteroPackages/Fossil/fork>)

@@ -10,7 +10,7 @@ module Fossil::Commands
   end
 
   class Config
-    PATH = "/usr/local/etc/fossil.conf"
+    PATH = "/etc/fossil.conf"
 
     @@force = false
 
