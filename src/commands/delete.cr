@@ -77,7 +77,10 @@ module Fossil::Commands
         end
       end
 
-      unless deleted.size == 0
+      if deleted.size == 0
+        Log.info "no backups were deleted"
+        exit
+      else
         Log.info ["deleted the following backups:"] + deleted
         exit
       end

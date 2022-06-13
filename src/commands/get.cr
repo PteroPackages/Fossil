@@ -94,7 +94,7 @@ module Fossil::Commands
       end
 
       if urls.size == 0
-        Log.fatal "no backup urls were returned!"
+        Log.fatal "no backup urls were returned"
       end
 
       unless @@download
@@ -110,7 +110,10 @@ module Fossil::Commands
         end
       end
 
-      unless saved.size == 0
+      if saved.size == 0
+        Log.info "no backups were downloaded"
+        exit
+      else
         Log.info ["saved downloads at these paths:"] + saved
         exit
       end

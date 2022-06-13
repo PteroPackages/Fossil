@@ -42,7 +42,7 @@ module Fossil::Commands
       end
 
       if cache.size == 0
-        Log.info "you have 0 backups across all your servers!"
+        Log.info "you have 0 backups across all your servers"
         exit
       end
 
