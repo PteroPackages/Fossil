@@ -34,6 +34,7 @@ module Fossil
       parser.on("list", "lists all server backups") { Commands::List.run ARGV[1..] }
       parser.on("get", "downloads the backups on a server") { Commands::Get.run ARGV[1..] }
       parser.on("create", "creates a new backup on a server") { Commands::Create.run ARGV[1..] }
+      parser.on("restore", "restores a backup to a server") { Commands::Restore.run ARGV[1..] }
       parser.on("delete", "deletes the backups on a server") { Commands::Delete.run ARGV[1..] }
       parser.on("config", "config management commands") { Commands::Config.run ARGV[1..] }
 
