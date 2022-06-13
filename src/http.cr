@@ -10,13 +10,6 @@ module Fossil
     property key     : String
     property headers : Hash(String, String)
 
-    @@codes = {
-      400 => ["400: received a bad request, retrying..."],
-      401 => ["401: request unauthorized", "make sure you are using the correct api key"],
-      403 => ["403: request forbidden", "make sure the api key has the necessary permissions"],
-      409 => ["409: request conflicted"]
-    }
-
     def initialize(config)
       @domain = config.domain
       @key = config.key
@@ -39,14 +32,20 @@ module Fossil
     end
 
     private def handle_error(ex : Crest::RequestFailed)
-      if msg = @@codes[ex.http_code]
-        Log.error msg
-        puts ex.response.body
-        exit 1
-      else
-        Log.error "unknown response: #{ex.http_code}"
-        Log.fatal [ex.message, *ex.backtrace]
+      if ex.http_code >= 500
+        Log.error ["unknown response: #{ex.http_code}", ex.message]
       end
+
+      data = Array(M::ApiError).from_json ex.response.body
+      Log.error [
+        "http status: #{ex.http_code}",
+        "#{data.size} error(s) returned:"
+      ]
+      data.each_with_index do |err, idx|
+        Log.error "%d (%s): %s" % [idx, err.status, err.detail]
+      end
+
+      exit 1
     end
 
     def test_domain : Nil

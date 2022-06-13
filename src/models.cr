@@ -15,6 +15,14 @@ module Fossil::Models
     property data   : Array(T)
   end
 
+  struct ApiError
+    include JSON::Serializable
+
+    property code   : String
+    property status : String
+    property detail : String
+  end
+
   struct Backup
     include JSON::Serializable
 
