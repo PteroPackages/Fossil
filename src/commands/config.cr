@@ -38,11 +38,11 @@ module Fossil::Commands
     # :nodoc:
     def self.run(args)
       OptionParser.parse(args) do |parser|
-        parser.on("-h", "--help", "send help information") { send_help }
-        parser.on("-f", "--force", "force overwrite the config") { @@force = true }
         parser.on("-i", "--init", "initialize a new config file") { init }
+        parser.on("-f", "--force", "force overwrite the config") { @@force = true }
         parser.on("--domain <url>", "set the domain for pterodactyl") { |v| set_domain v }
         parser.on("--key <key>", "set the account api key") { |v| set_key v }
+        parser.on("-h", "--help", "send help information") { send_help }
 
         parser.missing_option { |op| Log.fatal "missing option #{op} <...>" }
       end

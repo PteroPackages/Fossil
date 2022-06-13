@@ -28,8 +28,8 @@ module Fossil::Commands
     # :nodoc:
     def self.run(args)
       OptionParser.parse(args) do |parser|
-        parser.on("-h", "--help", "send help information") { send_help }
         parser.on("--id <id>", "the identifier or uuid of the backup") { |v| @@id = v }
+        parser.on("-h", "--help", "send help information") { send_help }
 
         parser.missing_option { |op| Log.fatal "missing option #{op} <...>" }
         parser.unknown_args do |args, _|

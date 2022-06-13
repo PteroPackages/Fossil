@@ -15,7 +15,7 @@ module Fossil::Commands
 
       Usage:
           fossil create <server> [-n|--name <name>] [-l|--locked]
-                        [-i|--ignored <file>] [-h|--help]
+                                  [-i|--ignored <file>] [-h|--help]
 
       Arguments:
           server                the identifier of the server
@@ -33,10 +33,10 @@ module Fossil::Commands
     # :nodoc:
     def self.run(args)
       OptionParser.parse(args) do |parser|
-        parser.on("-h", "--help", "send help information") { send_help }
         parser.on("-n <name>", "--name <name>", "set the name of the archive") { |v| @@name = v }
         parser.on("-l", "--locked", "lock the archive when created") { @@locked = true }
         parser.on("-i <file>", "--ignored <file>", "") { |v| @@ignored = v }
+        parser.on("-h", "--help", "send help information") { send_help }
 
         parser.missing_option { |op| Log.fatal "missing option #{op} <...>" }
         parser.unknown_args do |args, _|

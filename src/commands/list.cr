@@ -27,9 +27,9 @@ module Fossil::Commands
     # :nodoc:
     def self.run(args)
       OptionParser.parse(args) do |parser|
-        parser.on("-h", "--help", "sends help information") { send_help }
         parser.on("-a", "--all", "get all server backups") { @@access = "admin-all" }
         parser.on("-o", "--own", "get backups of servers you own") { @@access = "owner" }
+        parser.on("-h", "--help", "send help information") { send_help }
       end
 
       cfg = Commands::Config.read_config

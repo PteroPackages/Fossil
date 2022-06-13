@@ -16,13 +16,13 @@ module Fossil::Commands
                                   [-l|--last] [-h|--help]
 
       Arguments:
-          server      the identifier of the server
+          server        the identifier of the server
 
       Options:
-          --id <id>   the identifier or uuid of the backup
-          -f, --first get the first backup's status
-          -l, --last  get the last backup's status
-          -h, --help  send help information
+          --id <id>     the identifier or uuid of the backup
+          -f, --first   get the first backup's status
+          -l, --last    get the last backup's status
+          -h, --help    send help information
       HELP
 
       exit
@@ -31,9 +31,9 @@ module Fossil::Commands
     # :nodoc:
     def self.run(args)
       OptionParser.parse(args) do |parser|
-        parser.on("-h", "--help", "send help information") { send_help }
         parser.on("-f", "--first", "get the first backup's status") { @@op = :first }
         parser.on("-l", "--last", "get the last backup's status") { @@op = :last }
+        parser.on("-h", "--help", "send help information") { send_help }
 
         parser.missing_option { |op| Log.fatal "missing option #{op} <...>" }
         parser.unknown_args do |args, _|

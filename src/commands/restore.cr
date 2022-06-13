@@ -33,11 +33,11 @@ module Fossil::Commands
     # :nodoc:
     def self.run(args)
       OptionParser.parse(args) do |parser|
-        parser.on("-h", "--help", "send help information") { send_help }
         parser.on("--id <id>", "the identifier or uuid of the backup") { |v| @@id = v }
         parser.on("-f", "--first", "restore the first available backup") { @@op = :first }
         parser.on("-l", "--last", "restore the last available backup") { @@op = :last }
         parser.on("-r", "--random", "restore a random available backup") { @@op = :random }
+        parser.on("-h", "--help", "send help information") { send_help }
 
         parser.missing_option { |op| Log.fatal "missing option #{op} <...>" }
         parser.unknown_args do |args, _|
