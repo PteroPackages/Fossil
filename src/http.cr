@@ -80,5 +80,52 @@ module Fossil
         handle_error ex
       end
     end
+
+    def get_server(id)
+      begin
+        res = request :get, "/servers/#{id}"
+        val = M::ItemWrapper(M::Server).from_json res
+
+        val.attributes
+      rescue ex : Crest::RequestFailed
+        handle_error ex
+      end
+    end
+
+    def get_download_url(id, uuid)
+      begin
+        res = request :get, "/servers/#{id}/backups/#{uuid}/download"
+        val = M::ItemWrapper(M::SignedUrl).from_json res
+
+        val.attributes.url
+      rescue ex : Crest::RequestFailed
+        handle_error ex
+      end
+    end
+
+    def get_download(url)
+      copy_headers = @headers.clone
+      copy_headers.delete "Content-Type"
+      copy_headers.delete "Accept"
+
+      begin
+        res = Crest::Request.new(:get, url, headers: copy_headers).execute
+        name = res.headers["Content-Disposition"]
+          .as(String)
+          .split(";")[1]
+          .split("=")[1]
+          .strip('"')
+
+        size = res.headers["Content-Length"]
+          .as(String)
+          .to_i32
+
+        dl = M::Download.new name, size
+        dl.data = res.body
+        dl
+      rescue ex : Crest::RequestFailed
+        handle_error ex
+      end
+    end
   end
 end
