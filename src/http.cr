@@ -78,6 +78,14 @@ module Fossil
       end
     end
 
+    def delete_backup(id, uuid)
+      begin
+        request :delete, "/servers/#{id}/backups/#{uuid}"
+      rescue ex : Crest::RequestFailed
+        handle_error ex
+      end
+    end
+
     def get_servers(access = "")
       query = ""
       unless access.empty?
