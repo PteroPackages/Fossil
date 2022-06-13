@@ -32,17 +32,17 @@ module Fossil
     end
 
     private def handle_error(ex : Crest::RequestFailed)
-      if ex.http_code >= 500
-        Log.error ["unknown response: #{ex.http_code}", ex.message]
-      end
+      Log.error ex.message
+      exit(1) if ex.response.body.size == 0
 
-      data = Array(M::ApiError).from_json ex.response.body
+      data = Array(M::ApiError).from_json ex.response.body, root: "errors"
       Log.error [
-        "http status: #{ex.http_code}",
-        "#{data.size} error(s) returned:"
+        "#{data.size} error#{data.size > 1 ? "s" : ""} returned:",
+        ""
       ]
       data.each_with_index do |err, idx|
-        Log.error "%d (%s): %s" % [idx, err.status, err.detail]
+        Log.error [err.code + ":", err.detail]
+        Log.error("") unless idx == data.size - 1
       end
 
       exit 1
@@ -76,6 +76,14 @@ module Fossil
         val = M::ItemWrapper(M::Backup).from_json res
 
         val.attributes
+      rescue ex : Crest::RequestFailed
+        handle_error ex
+      end
+    end
+
+    def restore_backup(id, uuid)
+      begin
+        _ = request :post, "/servers/#{id}/backups/#{uuid}/restore"
       rescue ex : Crest::RequestFailed
         handle_error ex
       end
