@@ -34,4 +34,27 @@ module Fossil::Models
     property uuid       : String
     property name       : String
   end
+
+  struct SignedUrl
+    include JSON::Serializable
+
+    property url : String
+  end
+
+  struct Download
+    property name : String
+    property size : Int32
+
+    def initialize(@name, @size)
+      @data = uninitialized Slice(String)
+    end
+
+    def data : Slice(String)
+      @data
+    end
+
+    def data=(buffer)
+      @data = Slice(String).new @size, buffer
+    end
+  end
 end
