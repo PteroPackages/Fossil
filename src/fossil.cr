@@ -34,6 +34,7 @@ module Fossil
       parser.on("-v", "--version", "sends the fossil version") { puts "fossil version "+ VERSION; exit }
       parser.on("config", "config management commands") { Commands::Config.run ARGV[1..] }
       parser.on("list", "lists all server backups") { Commands::List.run ARGV[1..] }
+      parser.on("get", "downloads the backups on a server") { Commands::Get.run ARGV[1..] }
 
       parser.unknown_args do |args, _|
         send_help if args.empty?
