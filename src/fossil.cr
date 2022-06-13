@@ -4,7 +4,7 @@ require "./http.cr"
 require "./log.cr"
 
 module Fossil
-  VERSION = "0.3.0"
+  VERSION = "0.4.0"
 
   # :nodoc:
   def self.send_help
