@@ -17,7 +17,6 @@ module Fossil
         create
         restore
         delete
-        help
         config
 
     Options:
@@ -32,11 +31,11 @@ module Fossil
     OptionParser.parse do |parser|
       parser.on("-h", "--help", "sends help information") { send_help }
       parser.on("-v", "--version", "sends the fossil version") { puts "fossil version "+ VERSION; exit }
-      parser.on("config", "config management commands") { Commands::Config.run ARGV[1..] }
       parser.on("list", "lists all server backups") { Commands::List.run ARGV[1..] }
       parser.on("get", "downloads the backups on a server") { Commands::Get.run ARGV[1..] }
       parser.on("create", "creates a new backup on a server") { Commands::Create.run ARGV[1..] }
       parser.on("delete", "deletes the backups on a server") { Commands::Delete.run ARGV[1..] }
+      parser.on("config", "config management commands") { Commands::Config.run ARGV[1..] }
 
       parser.unknown_args do |args, _|
         send_help if args.empty?

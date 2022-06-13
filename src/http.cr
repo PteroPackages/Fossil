@@ -29,7 +29,11 @@ module Fossil
     end
 
     def request(method, path, body = nil) : String
-      req = Crest::Request.new(method, "#{@domain}/api/client#{path}", headers: @headers)
+      req = Crest::Request.new(method,
+                              "#{@domain}/api/client#{path}",
+                              body: body,
+                              headers: @headers)
+
       res = req.execute
       res.body
     end

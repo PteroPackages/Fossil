@@ -57,7 +57,7 @@ module Fossil::Commands
         ]
       end
 
-      if @@id != ""
+      unless @@id == ""
         backup = backups.find { |b| b.uuid.includes? @@id }
         if backup.nil?
           Log.fatal [
