@@ -35,6 +35,46 @@ module Fossil::Commands
       exit
     end
 
+    def self.get_spec
+      spec = HelpSpec.new
+      spec.info = [
+        "fossil config [-d|--domain <url>] [-k|--key <key>] [-f|--force] [-i|--init]",
+        "Manages the Fossil configuration file. This file only contains the domain for",
+        "Pterodactyl and the account API key."
+      ]
+
+      spec.flags = {
+        "domain" => [
+            "-d <url> | --domain <url>",
+            "fossil config --domain https://pterodactyl.domain",
+            "The domain of your Pterodactyl panel. This must be an absolute URL and should",
+            "not contain any URL parameters or queries.",
+          ],
+          "key" => [
+            "-k <key> | --key <key>",
+            "fossil config --key ptlc_V93QRkkwPsxgiqmkybX3ZyJb30PsLEYvPEk3wBpYvfv",
+            "The API key associated with your account. This must be a client API key not an",
+            "application API key. You can create one by going to",
+            "your panel > Account page > API Credentials."
+          ],
+          "force" => [
+            "-f | --force",
+            "fossil config --init --force",
+            "Force overwrites the config. This should only be used with the 'init' flag,",
+            "it has no effect on the other flags."
+          ],
+          "init" => [
+            "-i | --init",
+            "fossil config --init",
+            "Initializes a new configuration file (default file path is /etc/fossil.conf).",
+            "If the file path already exists, Fossil will refuse to overwrite it unless you",
+            "specify the 'force' flag."
+          ]
+        }
+
+      spec
+    end
+
     # :nodoc:
     def self.run(args)
       OptionParser.parse(args) do |parser|

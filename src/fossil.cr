@@ -41,6 +41,7 @@ module Fossil
       parser.on("restore", "restore backups on a server") { Commands::Restore.run ARGV[1..] }
       parser.on("delete", "delete existing backups") { Commands::Delete.run ARGV[1..] }
       parser.on("config", "fossil config control") { Commands::Config.run ARGV[1..] }
+      parser.on("help", "send detailed help information on commands") { Commands::Help.run ARGV[1..] }
       parser.on("-h", "--help", "send help information") { send_help }
       parser.on("-v", "--version", "send the current version") { puts "fossil version "+ VERSION; exit }
 
