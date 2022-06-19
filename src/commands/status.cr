@@ -31,6 +31,7 @@ module Fossil::Commands
     # :nodoc:
     def self.run(args)
       OptionParser.parse(args) do |parser|
+        parser.on("--id <id>", "the identifier or uuid of the backup") { |v| @@id = v }
         parser.on("-f", "--first", "get the first backup's status") { @@op = :first }
         parser.on("-l", "--last", "get the last backup's status") { @@op = :last }
         parser.on("-h", "--help", "send help information") { send_help }
@@ -91,20 +92,20 @@ module Fossil::Commands
         backup = b
       else
         case @@op
-        when :first   then backup = backups.first
-        when :last    then backup = backups.last
+        when :first then backup = backups.first
+        when :last  then backup = backups.last
         end
       end
 
       Log.info [
-        "name: #{backup.name}",
-        "uuid: #{backup.uuid}",
-        "size: #{backup.bytes}",
-        "checksum: #{backup.checksum}",
-        "locked: #{backup.is_locked}",
-        "successful: #{backup.is_successful}",
-        "created at: #{backup.created_at}",
-        "completed at: #{backup.completed_at}"
+        "name:          #{backup.name}",
+        "uuid:          #{backup.uuid}",
+        "size:          #{backup.bytes}",
+        "checksum:      #{backup.checksum}",
+        "locked:        #{backup.is_locked}",
+        "successful:    #{backup.is_successful}",
+        "created at:    #{backup.created_at}",
+        "completed at:  #{backup.completed_at}"
       ]
       exit
     end
