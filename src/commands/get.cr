@@ -143,7 +143,7 @@ module Fossil::Commands
       end
 
       begin
-        File.write path, dl.data
+        File.write path, dl.data.to_a.join
 
         path.to_s
       rescue
