@@ -47,7 +47,11 @@ module Fossil
     end
 
     def self.fetch
-      data = File.read(config_path).lines.uniq.reject &.starts_with? '#'
+      data = File.read(config_path)
+        .lines
+        .reject(&.starts_with? '#')
+        .reject(&.empty?)
+
       raise Error.new :config_not_set unless data.size >= 2
 
       url, key = data[0..1]
