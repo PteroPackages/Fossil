@@ -19,8 +19,8 @@ module Fossil
       case @kind
       in Kind::Uncaught
         Log.error [
-          "an unexpected error occured, please report this to the PteroPackages team",
-          "context: #{message}"
+          "An unexpected error occured, please report this to the PteroPackages team",
+          "Context: #{message}"
         ] + inspect_with_backtrace.lines
       in Kind::None
       end

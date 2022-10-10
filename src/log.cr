@@ -2,7 +2,7 @@ module Fossil::Log
   extend self
 
   def info(data : _) : Nil
-    STDOUT.puts %(#{"info".colorize(:blue)}: #{data})
+    STDOUT.puts %(#{"Info".colorize(:blue)}: #{data})
   end
 
   def info(data : Array(_)) : Nil
@@ -10,7 +10,7 @@ module Fossil::Log
   end
 
   def notice(data : _) : Nil
-    STDOUT.puts %(#{"notice".colorize(:cyan)}: #{data})
+    STDOUT.puts %(#{"Notice".colorize(:cyan)}: #{data})
   end
 
   def notice(data : Array(_)) : Nil
@@ -18,7 +18,7 @@ module Fossil::Log
   end
 
   def warn(data : _) : Nil
-    STDOUT.puts %(#{"warn".colorize(:yellow)}: #{data})
+    STDOUT.puts %(#{"Warn".colorize(:yellow)}: #{data})
   end
 
   def warn(data : Array(_)) : Nil
@@ -26,7 +26,7 @@ module Fossil::Log
   end
 
   def error(data : _) : Nil
-    STDOUT.puts %(#{"error".colorize(:red)}: #{data})
+    STDERR.puts %(#{"Error".colorize(:red)}: #{data})
   end
 
   def error(data : Array(_)) : Nil
