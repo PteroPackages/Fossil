@@ -1,7 +1,10 @@
 require "cli"
 require "colorize"
+require "ecr/macros"
+require "uri"
 
 require "./commands/*"
+require "./config"
 require "./errors"
 require "./log"
 
@@ -13,6 +16,8 @@ module Fossil
   def self.run : Nil
     app = CLI::Application.new
     app.help_template = Commands::RootCommand.help_template
+
+    app.add_command Commands::SetupCommand
 
     app.run ARGV
   end
