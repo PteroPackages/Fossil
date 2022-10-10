@@ -9,6 +9,9 @@ authors:
   - Devonte <https://github.com/devnote-dev>
 
 dependencies:
+  cli:
+    github: devnote-dev/cli.cr
+
   crest:
     github: mamantoha/crest
 

@@ -1,71 +1,40 @@
-require "colorize"
-
 module Fossil::Log
-  # We need this for some reason
-  Colorize.on_tty_only!
+  extend self
 
-  @@stack = [] of String
-
-  # Adds the log to the track stack.
-  def self.add(data : String)
-    @@stack << Time.utc.to_s "%s: #{data}"
+  def info(data : _) : Nil
+    STDOUT.puts %(#{"info".colorize(:blue)}: #{data})
   end
 
-  {% for level, color in {
-    "info" => :blue,
-    "notice" => :cyan,
-    "warn" => :yellow,
-    "error" => :red
-  } %}
-  # Writes a {{level.id}} log to the standard output stream, or standard error
-  # stream for error/fatal logs.
-  def self.{{level.id}}(data : String)
-    self.add data
-    {% if level.id == "error" %}
-    STDERR.puts "#{{{level}}.colorize({{color}})}: #{data}"
-    {% else %}
-    STDOUT.puts "#{{{level}}.colorize({{color}})}: #{data}"
-    {% end %}
+  def info(data : Array(_)) : Nil
+    data.each { |d| info(d) }
   end
 
-  # :ditto:
-  def self.{{level.id}}(data : Array(String))
-    data.each { |d| self.{{level.id}} d }
-  end
-  {% end %}
-
-  # Writes an error log to the standard error stream then terminates the
-  # process (exit code: 1).
-  def self.fatal(data : String)
-    self.add data
-    STDERR.puts "#{"error".colorize(:red)}: #{data}"
-    self.try_save
+  def notice(data : _) : Nil
+    STDOUT.puts %(#{"notice".colorize(:cyan)}: #{data})
   end
 
-  # :ditto:
-  def self.fatal(data : Array(String))
-    data.each do |d|
-      self.add d
-      STDERR.puts "#{"error".colorize(:red)}: #{d}"
-    end
-    self.try_save
+  def notice(data : Array(_)) : Nil
+    data.each { |d| notice(d) }
   end
 
-  # :ditto:
-  def self.fatal(err : Exception)
-    STDERR.puts "#{"error".colorize(:red)}: #{err.message || "unknown error"}"
-    if trace = err.backtrace
-      trace.each do |line|
-        self.add line
-        STDERR.puts "#{"error".colorize(:red)}: #{line}"
-      end
-    end
-    self.try_save
+  def warn(data : _) : Nil
+    STDOUT.puts %(#{"warn".colorize(:yellow)}: #{data})
   end
 
-  # :hidden:
-  def self.try_save
-    # TODO
-    exit 1
+  def warn(data : Array(_)) : Nil
+    data.each { |d| warn(d) }
+  end
+
+  def error(data : _) : Nil
+    STDOUT.puts %(#{"error".colorize(:red)}: #{data})
+  end
+
+  def error(data : Array(_)) : Nil
+    data.each { |d| error(d) }
+  end
+
+  def fatal(data : _) : NoReturn
+    error data
+    raise SystemExit.new
   end
 end
