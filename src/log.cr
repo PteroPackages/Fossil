@@ -1,8 +1,11 @@
 module Fossil::Log
   extend self
 
+  class_property stdout : IO = STDOUT
+  class_property stderr : IO = STDERR
+
   def info(data : _) : Nil
-    STDOUT.puts %(#{"Info".colorize(:blue)}: #{data})
+    stdout.puts %(#{"Info".colorize(:blue)}: #{data})
   end
 
   def info(data : Array(_)) : Nil
@@ -10,7 +13,7 @@ module Fossil::Log
   end
 
   def notice(data : _) : Nil
-    STDOUT.puts %(#{"Notice".colorize(:cyan)}: #{data})
+    stdout.puts %(#{"Notice".colorize(:cyan)}: #{data})
   end
 
   def notice(data : Array(_)) : Nil
@@ -18,7 +21,7 @@ module Fossil::Log
   end
 
   def warn(data : _) : Nil
-    STDOUT.puts %(#{"Warn".colorize(:yellow)}: #{data})
+    stdout.puts %(#{"Warn".colorize(:yellow)}: #{data})
   end
 
   def warn(data : Array(_)) : Nil
@@ -26,7 +29,7 @@ module Fossil::Log
   end
 
   def error(data : _) : Nil
-    STDERR.puts %(#{"Error".colorize(:red)}: #{data})
+    stderr.puts %(#{"Error".colorize(:red)}: #{data})
   end
 
   def error(data : Array(_)) : Nil
