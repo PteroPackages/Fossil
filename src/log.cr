@@ -4,6 +4,14 @@ module Fossil::Log
   class_property stdout : IO = STDOUT
   class_property stderr : IO = STDERR
 
+  def write(data : _) : Nil
+    stdout.puts data
+  end
+
+  def write(data : Array(_)) : Nil
+    data.each { |d| write(d) }
+  end
+
   def info(data : _) : Nil
     stdout.puts %(#{"Info".colorize(:blue)}: #{data})
   end
