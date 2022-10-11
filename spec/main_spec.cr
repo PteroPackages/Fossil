@@ -6,6 +6,6 @@ describe Fossil do
     Fossil::Log.stdout = io
     Fossil.run ["-v"]
 
-    io.to_s.should eq "Fossil versin #{Fossil::VERSION}"
+    io.to_s.should eq "Fossil version #{Fossil::VERSION}"
   end
 end

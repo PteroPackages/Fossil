@@ -17,6 +17,6 @@ dependencies:
 
 targets:
   fossil:
-    main: src/fossil.cr
+    main: src/main.cr
 
 license: MIT
