@@ -54,7 +54,7 @@ module Fossil
 
       raise Error.new :config_not_set unless data.size >= 2
 
-      url, key = data[0..1]
+      url, key = data[0], data[1]
       URI.parse(url) rescue raise Error.new :invalid_config_url
       raise Error.new :invalid_config_key unless key[0..4] == "pltc_"
 

@@ -18,6 +18,7 @@ module Fossil
     app.help_template = Commands::RootCommand.help_template
 
     app.add_command Commands::SetupCommand
+    app.add_command Commands::ConfigCommand
 
     app.run args
   end
@@ -25,6 +26,8 @@ end
 
 begin
   Fossil.run ARGV
+rescue ex : Fossil::Error
+  ex.format_log
 rescue Fossil::SystemExit
 rescue ex
   Fossil::Error.new(:uncaught, ex).format_log
