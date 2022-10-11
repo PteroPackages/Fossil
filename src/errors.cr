@@ -5,8 +5,8 @@ module Fossil
       ConfigNotFound
       ConfigNotSet
       ConfigWriteDenied
-      InvalidConfigUrl
-      InvalidConfigKey
+      ConfigInvalidUrl
+      ConfigInvalidKey
     end
 
     getter kind : Kind
@@ -15,7 +15,7 @@ module Fossil
       super cause: cause
     end
 
-    def format_log(fatal : Bool = false) : Nil
+    def print_log(fatal : Bool = false) : Nil
       case @kind
       in Kind::ConfigNotFound
         Log.error [
@@ -30,12 +30,12 @@ module Fossil
           "Failed to write to config file: permission denied",
           "Make sure you are running this command #{{{ flag?(:win32) ? "with admin permissions" : "as root user" }}}",
         ]
-      in Kind::InvalidConfigUrl
+      in Kind::ConfigInvalidUrl
         Log.error [
           "The panel URL set in the config is invalid",
           %(Update this using the '#{"fossil config --set --url <url>".colorize(:light_blue)}' command),
         ]
-      in Kind::InvalidConfigKey
+      in Kind::ConfigInvalidKey
         Log.error [
           "The API key set in the config is invalid",
           %(Update this using the '#{"fossil config --set --key <key>".colorize(:light_blue)}' command),

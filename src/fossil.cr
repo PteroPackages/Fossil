@@ -27,8 +27,8 @@ end
 begin
   Fossil.run ARGV
 rescue ex : Fossil::Error
-  ex.format_log
+  ex.print_log
 rescue Fossil::SystemExit
 rescue ex
-  Fossil::Error.new(:uncaught, ex).format_log
+  Fossil::Error.new(:uncaught, ex).print_log
 end
