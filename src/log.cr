@@ -4,8 +4,14 @@ module Fossil::Log
   class_property stdout : IO = STDOUT
   class_property stderr : IO = STDERR
 
+  private def color(data : _) : String
+    return data.to_s unless data.includes? '$'
+
+    data.to_s.gsub("$B", "\e[94m").gsub("$R", "\e[0m")
+  end
+
   def write(data : _) : Nil
-    stdout.puts data
+    stdout.puts color(data)
   end
 
   def write(data : Array(_)) : Nil
@@ -13,7 +19,7 @@ module Fossil::Log
   end
 
   def info(data : _) : Nil
-    stdout.puts %(#{"Info".colorize(:blue)}: #{data})
+    stdout.puts %(#{"Info".colorize(:blue)} #{color(data)})
   end
 
   def info(data : Array(_)) : Nil
@@ -21,7 +27,7 @@ module Fossil::Log
   end
 
   def notice(data : _) : Nil
-    stdout.puts %(#{"Notice".colorize(:cyan)}: #{data})
+    stdout.puts %(#{"Notice".colorize(:cyan)} #{color(data)})
   end
 
   def notice(data : Array(_)) : Nil
@@ -29,7 +35,7 @@ module Fossil::Log
   end
 
   def warn(data : _) : Nil
-    stdout.puts %(#{"Warn".colorize(:yellow)}: #{data})
+    stdout.puts %(#{"Warn".colorize(:yellow)} #{color(data)})
   end
 
   def warn(data : Array(_)) : Nil
@@ -37,7 +43,7 @@ module Fossil::Log
   end
 
   def error(data : _) : Nil
-    stderr.puts %(#{"Error".colorize(:red)}: #{data})
+    stderr.puts %(#{"Error".colorize(:red)} #{color(data)})
   end
 
   def error(data : Array(_)) : Nil
