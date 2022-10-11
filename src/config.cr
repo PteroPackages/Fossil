@@ -10,7 +10,7 @@ module Fossil
         Path["/lib/fossil/archives"]
       {% end %}
     end
-  
+
     def self.cache_path : Path
       {% if flag?(:win32) %}
         Path[ENV["APPDATA"]] / "Fossil" / "Cache"
@@ -18,7 +18,7 @@ module Fossil
         Path["/lib/fossil/cache"]
       {% end %}
     end
-  
+
     def self.config_path : Path
       {% if flag?(:win32) %}
         Path[ENV["APPDATA"]] / "Fossil" / "fossil.cfg"

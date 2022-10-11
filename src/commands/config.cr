@@ -27,7 +27,7 @@ module Fossil::Commands
       if options.has? "set"
         Log.fatal [
           "No panel URL or API key specified",
-          "See 'fossil config --help' for more information"
+          "See 'fossil config --help' for more information",
         ] if url.empty? && key.empty?
 
         cfg.url = url unless url.empty?

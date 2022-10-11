@@ -18,7 +18,7 @@ module Fossil::Commands
         rescue File::AccessDeniedError
           Log.error [
             "Failed to create config directory: missing permissions",
-            "Please create this directory separately for Fossil to operate"
+            "Please create this directory separately for Fossil to operate",
           ]
         end
       end
@@ -33,7 +33,7 @@ module Fossil::Commands
         rescue File::AccessDeniedError
           Log.error [
             "Failed to create config file: missing permissions",
-            "Please create this file separately for Fossil to operate"
+            "Please create this file separately for Fossil to operate",
           ]
         end
       end
@@ -48,7 +48,7 @@ module Fossil::Commands
         rescue File::AccessDeniedError
           Log.error [
             "Failed to create cache directory: missing permissions",
-            "Please create this directory separately for Fossil to operate"
+            "Please create this directory separately for Fossil to operate",
           ]
         end
       end
@@ -63,7 +63,7 @@ module Fossil::Commands
         rescue File::AccessDeniedError
           Log.error [
             "Failed to create archive directory: missing permissions",
-            "Please create this directory separately for Fossil to operate"
+            "Please create this directory separately for Fossil to operate",
           ]
         end
       end
