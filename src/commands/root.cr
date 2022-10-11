@@ -36,9 +36,9 @@ module Fossil::Commands
 
     def execute(args, options) : Nil
       if options.has? "version"
-        puts "Fossil version #{::Fossil::VERSION}"
+        Log.write "Fossil version #{::Fossil::VERSION}"
       else
-        puts help_template
+        Log.write help_template
       end
     end
   end
