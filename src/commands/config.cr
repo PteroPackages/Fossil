@@ -1,43 +1,62 @@
 module Fossil::Commands
-  class ConfigCommand < CLI::Command
-    include Base
+  class SetConfigCommand < BaseCommand
+    def setup : Nil
+      @name = "set"
 
+      add_argument "option", desc: "the config option to change", required: true
+      add_argument "value", desc: "the value to set", required: true
+    end
+
+    def pre_run(args, options)
+      op = args.get("option").try(&.as_s) || ""
+
+      unless op == "url" || op == "key"
+        Log.fatal ["invalid config option '#{op}'", "valid options: url, key"]
+      end
+    end
+
+    def run(args, options) : Nil
+      cfg = Config.fetch
+
+      case args.get("option").try(&.as_s) || ""
+      when "url" then cfg.url = args.get("value").try(&.as_s) || ""
+      when "key" then cfg.key = args.get("value").try(&.as_s) || ""
+      end
+
+      cfg.save
+    rescue File::AccessDeniedError
+      raise Error.new :config_write_denied
+    rescue File::NotFoundError
+      raise Error.new :config_not_found
+    end
+  end
+
+  class ResetConfigCommand < BaseCommand
+    def setup : Nil
+      @name = "reset"
+    end
+
+    def run(args, options) : Nil
+      Config.write_template
+    rescue File::AccessDeniedError
+      raise Error.new :config_write_denied
+    end
+  end
+
+  class ConfigCommand < BaseCommand
     def setup : Nil
       @name = "config"
       @description = "Shows the current config or modifies fields with the given flags."
-      @usage << "config --set [--url <url>] [--key <key>]"
-      @usage << "config --reset"
+      add_usage "config set [--url <url>] [--key <key>]"
+      add_usage "config reset"
 
-      add_option "set", desc: "sets the command into write mode to update the config"
-      add_option "url", desc: "shows the current url, or updates it if in write mode", kind: :string, default: ""
-      add_option "key", desc: "shows the current key, or updates it if in write mode", kind: :string, default: ""
-      add_option "reset", short: "r", desc: "resets the config file"
+      add_command SetConfigCommand.new
+      add_command ResetConfigCommand.new
     end
 
-    def execute(args, options) : Nil
-      if options.has? "reset"
-        Config.new("https://pterodactyl.domain", "ptlc_your_api_key").save
-        raise SystemExit.new
-      end
-
+    def run(args, options) : Nil
       cfg = Config.fetch
-      url = options.get! "url"
-      key = options.get! "key"
-
-      if options.has? "set"
-        Log.fatal [
-          "No panel URL or API key specified",
-          "See '$Bfossil config --help$R' for more information",
-        ] if url.empty? && key.empty?
-
-        cfg.url = url unless url.empty?
-        cfg.key = key unless key.empty?
-        cfg.save
-      else
-        Log.write [cfg.url, cfg.key]
-      end
-    rescue File::AccessDeniedError
-      raise Error.new :config_write_denied
+      Log.write [cfg.url, cfg.key]
     rescue File::NotFoundError
       raise Error.new :config_not_found
     end

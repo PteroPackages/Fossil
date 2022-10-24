@@ -11,6 +11,7 @@ authors:
 dependencies:
   cli:
     github: devnote-dev/cli.cr
+    branch: stable
 
   crest:
     github: mamantoha/crest

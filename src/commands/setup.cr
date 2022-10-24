@@ -1,13 +1,11 @@
 module Fossil::Commands
-  class SetupCommand < CLI::Command
-    include Base
-
+  class SetupCommand < BaseCommand
     def setup : Nil
       @name = "setup"
       @description = "Sets up Fossil configurations and directories."
     end
 
-    def execute(args, options) : Nil
+    def run(args, options) : Nil
       if Dir.exists? Config.config_path.parent
         Log.info "Found config directory (#{Config.config_path.parent})"
       else
