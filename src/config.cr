@@ -38,7 +38,7 @@ module Fossil
 
       # The second line MUST be the API key. Fossil only
       # supports the use of client API keys:
-      pltc_your_api_key_here
+      ptlc_your_api_key_here
 
       # Any additional lines will be ignored by Fossil
       so you can store additional information here if
@@ -54,12 +54,9 @@ module Fossil
 
       raise Error.new :config_not_set unless data.size >= 2
 
-      # TODO:
-      # this is so simple yet it somehow broke...
-      #
-      # url, key = data[0], data[1]
-      # URI.parse(url) rescue raise Error.new :invalid_config_url
-      # raise Error.new :invalid_config_key unless key[0..4] == "pltc_"
+      url, key = data[0], data[1]
+      URI.parse(url) rescue raise Error.new :config_invalid_url
+      raise Error.new :config_invalid_key unless key[0..4] == "ptlc_"
 
       new data[0], data[1]
     end
