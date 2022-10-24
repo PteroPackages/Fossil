@@ -2,25 +2,33 @@ module Fossil::Commands
   class SetConfigCommand < BaseCommand
     def setup : Nil
       @name = "set"
+      @description = "Sets an option in the config to a value."
+      add_usage "config set <option> <value>"
 
       add_argument "option", desc: "the config option to change", required: true
       add_argument "value", desc: "the value to set", required: true
     end
 
-    def pre_run(args, options)
-      op = args.get("option").try(&.as_s) || ""
-
-      unless op == "url" || op == "key"
-        Log.fatal ["invalid config option '#{op}'", "valid options: url, key"]
-      end
+    def on_missing_arguments(args)
+      Log.fatal [
+        %(Missing required argument#{"s" if args.size == 2}: #{args.join ", "}),
+        "See '$Bfossil config set --help$R' for more information",
+      ]
     end
 
     def run(args, options) : Nil
-      cfg = Config.fetch
+      op = args.get!("option").as_s
 
-      case args.get("option").try(&.as_s) || ""
-      when "url" then cfg.url = args.get("value").try(&.as_s) || ""
-      when "key" then cfg.key = args.get("value").try(&.as_s) || ""
+      unless op == "url" || op == "key"
+        Log.fatal ["Invalid config option '#{op}'", "Valid options: url, key"]
+      end
+
+      cfg = Config.fetch
+      value = args.get!("value").as_s
+
+      case args.get! "option"
+      when "url" then cfg.url = value
+      when "key" then cfg.key = value
       end
 
       cfg.save
@@ -34,6 +42,8 @@ module Fossil::Commands
   class ResetConfigCommand < BaseCommand
     def setup : Nil
       @name = "reset"
+      @desciption = "Resets the config to an example template."
+      add_usage "config reset"
     end
 
     def run(args, options) : Nil
@@ -47,7 +57,7 @@ module Fossil::Commands
     def setup : Nil
       @name = "config"
       @description = "Shows the current config or modifies fields with the given flags."
-      add_usage "config set [--url <url>] [--key <key>]"
+      add_usage "config set <option> <value>"
       add_usage "config reset"
 
       add_command SetConfigCommand.new
