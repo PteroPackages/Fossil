@@ -1,12 +1,17 @@
 require "cli"
 require "colorize"
+require "crest"
 require "ecr/macros"
+require "json"
 require "uri"
 
+require "./archive"
 require "./commands/*"
 require "./config"
 require "./errors"
+require "./handlers/*"
 require "./log"
+require "./models"
 
 Colorize.on_tty_only!
 
