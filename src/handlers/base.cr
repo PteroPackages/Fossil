@@ -19,7 +19,7 @@ module Fossil::Handlers
     end
 
     abstract def create(*, exclude : Bool = false, ids : Array(Int32)? = nil,
-                        from : Int32? = nil, to : Int32? = nil) : Archive::Source
+                        from : Int32? = nil, to : Int32? = nil) : Array(Archive::Source)
 
     abstract def restore : Nil
   end
