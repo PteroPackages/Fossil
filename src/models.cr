@@ -9,11 +9,24 @@ module Fossil::Models
     getter attributes : T
   end
 
+  struct Metadata < BaseModel
+    include JSON::Serializable
+
+    getter count : Int32
+    getter total : Int32
+    getter per_page : Int32
+    getter current_page : Int32
+    getter total_pages : Int32
+    getter links : Hash(String, String)
+  end
+
   struct FractalList(T) < BaseModel
     include JSON::Serializable
 
     getter object : String
     getter data : Array(FractalItem(T))
+    @[JSON::Field(key: "pagination", root: "meta")]
+    getter meta : Metadata
   end
 
   struct User < BaseModel
