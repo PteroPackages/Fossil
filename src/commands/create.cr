@@ -16,7 +16,6 @@ module Fossil::Commands
       end
 
       cfg = Config.fetch
-      file = File.open Config.archive_path
       dir = Config.archive_path / Time.utc.to_s("%FT%T").gsub(":", "-")
 
       begin
@@ -31,12 +30,10 @@ module Fossil::Commands
 
       if options.has? "users"
         archive.scopes << "users"
-        archive.sources << Handlers::UserHandler.new(cfg).create
+        archive.sources += Handlers::UserHandler.new(cfg).create
       end
 
-      archive.generate file
-    ensure
-      file.close
+      archive.generate dir
     end
   end
 end
