@@ -1,20 +1,45 @@
 module Fossil
   class Archive
-    property sources : Array(Source)
+    include JSON::Serializable
+
+    property created_at : Time?
+    property files : Array(String)
+    @[JSON::Field(ignore: true)]
+    property sources : Array(Source(JSON::Serializable))
 
     def initialize
-      @sources = [] of Source
+      @files = [] of String
+      @sources = [] of Source(JSON::Serializable)
     end
 
-    def generate(dir : Path) : Nil
+    def save(dir : Path) : Nil
+      @files = @sources.map &.save dir
+
+      File.open(dir / "archive.lock") do |file|
+        @created_at = Time.utc
+        to_json file
+      end
     end
 
     struct Source(M)
-      getter key : String
+      include JSON::Serializable
+
+      getter index : Int32
+      getter count : Int32
       getter data : Array(M)
 
-      def initialize(@data : Array(M))
-        @key = M.class.name.downcase
+      def initialize(@index, @data)
+        @count = data.size
+      end
+
+      def save(dir : Path) : String
+        path = dir / "#{M.class.name.downcase}_#{@index}.json"
+
+        File.open(path) do |file|
+          to_json file
+        end
+
+        path.to_s
       end
     end
   end

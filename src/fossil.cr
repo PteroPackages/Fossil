@@ -9,7 +9,7 @@ require "./archive"
 require "./commands/*"
 require "./config"
 require "./errors"
-require "./handlers/*"
+require "./handler"
 require "./log"
 require "./models"
 
@@ -24,6 +24,7 @@ module Fossil
 
       add_command Commands::ConfigCommand.new
       add_command Commands::SetupCommand.new
+      add_command Commands::CreateCommand.new
 
       add_option 'v', "version", desc: "get the current version"
     end

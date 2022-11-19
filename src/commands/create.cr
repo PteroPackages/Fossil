@@ -26,14 +26,15 @@ module Fossil::Commands
           "Make sure you are running this command #{{{ flag?(:win32) ? "with admin permissions" : "as root user" }}}",
         ]
       end
-      archive = Archive.create
+
+      archive = Archive.new
+      handler = Handler.new cfg
 
       if options.has? "users"
-        archive.scopes << "users"
-        archive.sources += Handlers::UserHandler.new(cfg).create
+        archive.sources.concat handler.create_users
       end
 
-      archive.generate dir
+      archive.save dir
     end
   end
 end
