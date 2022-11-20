@@ -19,8 +19,8 @@ class Fossil::Handler
     parsed = [] of Array(Models::Base)
     parsed << data.data.map(&.attributes).as(Array(Models::Base))
 
-    if (current = data.meta.current_page) < (total = data.meta.total_pages)
-      (current+1..total).each do |index|
+    if (total = data.meta.total_pages) > 1
+      (2..total).each do |index|
         results = Crest.get "#{@config.url}/api/application/#{route}?page=#{index}", headers: default_headers
         data = Models::FractalList(T).from_json results.body
         parsed << data.data.map(&.attributes).as(Array(Models::Base))
