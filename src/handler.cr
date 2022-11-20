@@ -17,13 +17,13 @@ class Fossil::Handler
     results = Crest.get "#{@config.url}/api/application/#{route}", headers: default_headers
     data = Models::FractalList(T).from_json results.body
     parsed = [] of Array(Models::Base)
-    parsed << data.data.map(&.attributes).as(Array(Models::Base))
+    parsed << data.data.map &.attributes.as(Models::Base)
 
     if (total = data.meta.total_pages) > 1
       (2..total).each do |index|
         results = Crest.get "#{@config.url}/api/application/#{route}?page=#{index}", headers: default_headers
         data = Models::FractalList(T).from_json results.body
-        parsed << data.data.map(&.attributes).as(Array(Models::Base))
+        parsed << data.data.map &.attributes.as(Models::Base)
       end
     end
 
