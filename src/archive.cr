@@ -5,11 +5,11 @@ module Fossil
     property created_at : Time?
     property files : Array(String)
     @[JSON::Field(ignore: true)]
-    property sources : Array(Source(JSON::Serializable))
+    property sources : Array(Source)
 
     def initialize
       @files = [] of String
-      @sources = [] of Source(JSON::Serializable)
+      @sources = [] of Source
     end
 
     def save(dir : Path) : Nil
@@ -21,19 +21,20 @@ module Fossil
       end
     end
 
-    struct Source(M)
+    struct Source
       include JSON::Serializable
 
+      getter key : String
       getter index : Int32
       getter count : Int32
-      getter data : Array(M)
+      getter data : Array(Models::Base)
 
-      def initialize(@index, @data)
+      def initialize(@key, @index, @data)
         @count = data.size
       end
 
       def save(dir : Path) : String
-        path = dir / "#{M.class.name.downcase}_#{@index}.json"
+        path = dir / "#{@key}_#{@index}.json"
 
         File.open(path) do |file|
           to_json file

@@ -13,16 +13,17 @@ class Fossil::Handler
     }
   end
 
-  private def get_all_pages(route : String, type : T.class) : Array(Array(T)) forall T
+  private def get_all_pages(route : String, type : T.class) : Array(Array(Models::Base)) forall T
     results = Crest.get "#{@config.url}/api/application/#{route}", headers: default_headers
     data = Models::FractalList(T).from_json results.body
-    parsed = [data.data.map(&.attributes)] of Array(T)
+    parsed = [] of Array(Models::Base)
+    parsed << data.data.map(&.attributes).as(Array(Models::Base))
 
     if (current = data.meta.current_page) < (total = data.meta.total_pages)
       (current+1..total).each do |index|
         results = Crest.get "#{@config.url}/api/application/#{route}?page=#{index}", headers: default_headers
         data = Models::FractalList(T).from_json results.body
-        parsed << data.data.map &.attributes
+        parsed << data.data.map(&.attributes).as(Array(Models::Base))
       end
     end
 
@@ -31,12 +32,12 @@ class Fossil::Handler
 
   private macro handler(route, type)
     def create_{{ route.id }}(*, exclude : Bool = false, ids : Array(Int32)? = nil,
-                              from : Int32? = nil, to : Int32? = nil) : Array(Archive::Source({{ type }}))
+                              from : Int32? = nil, to : Int32? = nil) : Array(Archive::Source)
       results = get_all_pages {{ route }}, {{ type }}
-      sources = [] of Archive::Source({{ type }})
+      sources = [] of Archive::Source
 
       results.each_with_index do |res, index|
-        sources << Archive::Source({{ type }}).new index, res
+        sources << Archive::Source.new {{ route }}, index, res
       end
 
       sources

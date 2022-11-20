@@ -1,17 +1,14 @@
 module Fossil::Models
-  abstract struct BaseModel
+  abstract struct Base
+    include JSON::Serializable
   end
 
-  struct FractalItem(T) < BaseModel
-    include JSON::Serializable
-
+  struct FractalItem(T) < Base
     getter object : String
     getter attributes : T
   end
 
-  struct Metadata < BaseModel
-    include JSON::Serializable
-
+  struct Metadata < Base
     getter count : Int32
     getter total : Int32
     getter per_page : Int32
@@ -20,18 +17,14 @@ module Fossil::Models
     getter links : Hash(String, String)
   end
 
-  struct FractalList(T) < BaseModel
-    include JSON::Serializable
-
+  struct FractalList(T) < Base
     getter object : String
     getter data : Array(FractalItem(T))
     @[JSON::Field(key: "pagination", root: "meta")]
     getter meta : Metadata
   end
 
-  struct User < BaseModel
-    include JSON::Serializable
-
+  struct User < Base
     getter id : Int32
     getter external_id : String?
     getter uuid : String
