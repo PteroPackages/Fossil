@@ -27,7 +27,7 @@ module Fossil::Commands
         Log.info "Creating config file: #{Config.config_path}"
 
         begin
-          Config.write_template
+          Config.default.save
         rescue File::AccessDeniedError
           Log.error [
             "Failed to create config file: missing permissions",

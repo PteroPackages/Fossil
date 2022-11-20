@@ -26,9 +26,10 @@ module Fossil::Commands
       cfg = Config.fetch
       value = args.get!("value").as_s
 
-      case args.get! "option"
-      when "url" then cfg.url = value
-      when "key" then cfg.key = value
+      if op == "url"
+        cfg.url = value
+      else
+        cfg.key = value
       end
 
       cfg.save
@@ -47,7 +48,7 @@ module Fossil::Commands
     end
 
     def run(args, options) : Nil
-      Config.write_template
+      Config.default.save
     rescue File::AccessDeniedError
       raise Error.new :config_write_denied
     end

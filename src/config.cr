@@ -27,38 +27,19 @@ module Fossil
       {% end %}
     end
 
-    def self.write_template : Nil
-      File.write config_path, <<-CFG
-      # This is a really basic config file setup for Fossil
-      # as it only requires the panel URL and API key to
-      # operate.
-
-      # The first line MUST be the panel domain:
-      https://pterodactyl.domain
-
-      # The second line MUST be the API key. Fossil only
-      # supports the use of client API keys:
-      ptlc_your_api_key_here
-
-      # Any additional lines will be ignored by Fossil
-      so you can store additional information here if
-      you want.
-      CFG
-    end
-
     def self.fetch
-      data = File.read(config_path)
-        .lines
-        .reject(&.starts_with? '#')
-        .reject(&.empty?)
-
+      data = File.read(config_path).lines
       raise Error.new :config_not_set unless data.size >= 2
 
-      url, key = data[0], data[1]
+      url, key = data
       URI.parse(url) rescue raise Error.new :config_invalid_url
       raise Error.new :config_invalid_key unless key[0..4] == "ptlc_"
 
-      new data[0], data[1]
+      new url, key
+    end
+
+    def self.default
+      new "https://pterodactyl.test", "ptlc_your_ap1_k3y"
     end
 
     def initialize(@url, @key)
