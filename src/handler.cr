@@ -51,4 +51,5 @@ class Fossil::Handler
 
   handler "users", Models::User
   handler "servers", Models::Server
+  handler "nodes", Models::Node
 end

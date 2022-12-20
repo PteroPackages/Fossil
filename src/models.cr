@@ -42,6 +42,28 @@ module Fossil::Models
     getter oom_disabled : Bool = false
   end
 
+  struct Node < Base
+    getter id : Int32
+    getter name : String
+    getter description : String?
+    getter location_id : Int32
+    getter public : Bool
+    getter fqdn : String
+    getter scheme : String
+    getter behind_proxy : Bool
+    getter memory : Int64
+    getter memory_overallocate : Int64
+    getter disk : Int64
+    getter disk_overallocate : Int64
+    getter daemon_base : String
+    getter daemon_sftp : Int64
+    getter daemon_listen : Int64
+    getter maintenance_mode : Bool
+    getter upload_size : Int64
+    getter created_at : String
+    getter updated_at : String?
+  end
+
   struct User < Base
     getter id : Int32
     getter external_id : String?
