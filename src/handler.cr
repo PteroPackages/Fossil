@@ -13,16 +13,21 @@ class Fossil::Handler
     }
   end
 
-  private def get_all_pages(route : String, type : T.class) : Array(Array(Models::Base)) forall T
-    results = Crest.get "#{@config.url}/api/application/#{route}", headers: default_headers
+  private def get_all_pages(path : String, type : T.class) : Array(Array(Models::Base)) forall T
+    Log.info "Fetching user objects..."
+    results = Crest.get "#{@config.url}/api/application/#{path}", headers: default_headers
     data = Models::FractalList(T).from_json results.body
+    Log.info "#{data.data.size} objects received"
+
     parsed = [] of Array(Models::Base)
     parsed << data.data.map &.attributes.as(Models::Base)
 
-    if (total = data.meta.total_pages) > 1
+    if (total = data.meta.pagination.total_pages) > 1
       (2..total).each do |index|
-        results = Crest.get "#{@config.url}/api/application/#{route}?page=#{index}", headers: default_headers
+        results = Crest.get "#{@config.url}/api/application/#{path}?page=#{index}", headers: default_headers
         data = Models::FractalList(T).from_json results.body
+
+        Log.info "#{data.data.size} objects received"
         parsed << data.data.map &.attributes.as(Models::Base)
       end
     end
