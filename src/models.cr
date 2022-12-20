@@ -8,20 +8,23 @@ module Fossil::Models
     getter attributes : T
   end
 
-  struct Metadata < Base
+  struct Pagination < Base
     getter count : Int32
     getter total : Int32
     getter per_page : Int32
     getter current_page : Int32
     getter total_pages : Int32
-    getter links : Hash(String, String)
+  end
+
+  # TODO: get rid of this...
+  struct Wrapper < Base
+    getter pagination : Pagination
   end
 
   struct FractalList(T) < Base
     getter object : String
     getter data : Array(FractalItem(T))
-    @[JSON::Field(key: "pagination", root: "meta")]
-    getter meta : Metadata
+    getter meta : Wrapper
   end
 
   struct User < Base
