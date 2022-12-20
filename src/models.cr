@@ -42,4 +42,40 @@ module Fossil::Models
     getter created_at : String
     getter updated_at : String?
   end
+
+  struct FeatureLimits < Base
+    getter allocations : Int32
+    getter backups : Int32
+    getter databases : Int32
+  end
+
+  struct Limits < Base
+    getter memory : Int64
+    getter swap : Int64
+    getter disk : Int64
+    getter io : Int64?
+    getter threads : String?
+    getter oom_disabled : Bool = false
+  end
+
+  struct Server < Base
+    getter id : Int32
+    getter external_id : String?
+    getter uuid : String
+    getter identifier : String
+    getter name : String
+    getter description : String?
+    getter status : String?
+    getter suspended : Bool
+    getter limits : Limits
+    getter feature_limits : FeatureLimits
+    getter user : Int32
+    getter node : Int32
+    getter allocation : Int32
+    getter nest : Int32
+    getter egg : Int32
+    getter container
+    getter created_at : String
+    getter updated_at : String?
+  end
 end

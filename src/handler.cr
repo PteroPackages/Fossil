@@ -14,7 +14,7 @@ class Fossil::Handler
   end
 
   private def get_all_pages(path : String, type : T.class) : Array(Array(Models::Base)) forall T
-    Log.info "Fetching user objects..."
+    Log.info "Fetching #{type.name.split("::").last.downcase} objects..."
     results = Crest.get "#{@config.url}/api/application/#{path}", headers: default_headers
     data = Models::FractalList(T).from_json results.body
     Log.info "> #{data.data.size} objects received"
@@ -50,4 +50,5 @@ class Fossil::Handler
   end
 
   handler "users", Models::User
+  handler "servers", Models::Server
 end
