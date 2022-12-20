@@ -42,6 +42,16 @@ module Fossil::Models
     getter oom_disabled : Bool = false
   end
 
+  struct Nest < Base
+    getter id : Int32
+    getter uuid : String
+    getter author : String
+    getter name : String
+    getter description : String?
+    getter created_at : String
+    getter updated_at : String?
+  end
+
   struct Node < Base
     getter id : Int32
     getter name : String

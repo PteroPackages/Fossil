@@ -7,6 +7,7 @@ module Fossil::Commands
       add_option "users", desc: "scope for archiving all users"
       add_option "servers", desc: "scope for archiving all servers"
       add_option "nodes", desc: "scope for archiving all nodes"
+      add_option "nests", desc: "scope for archiving all nests"
       # add_option "compress", desc: "compresses the archive into a single tar file"
     end
 
@@ -44,6 +45,7 @@ module Fossil::Commands
       archive.sources.concat handler.create_users if options.has? "users"
       archive.sources.concat handler.create_servers if options.has? "servers"
       archive.sources.concat handler.create_nodes if options.has? "nodes"
+      archive.sources.concat handler.create_nests if options.has? "nests"
 
       Log.info "Collected all objects, saving..."
       archive.save dir
