@@ -27,6 +27,14 @@ module Fossil::Commands
         ]
       end
 
+      Log.info "Testing panel connection..."
+      begin
+        Crest.get cfg.url + "/sanctum/csrf-cookie"
+      rescue ex
+        Log.fatal ["Connection to the panel failed:", ex.to_s]
+      end
+
+      Log.info "Creating archive with the following scope(s): #{options.options.keys.join(", ")}"
       archive = Archive.new
       handler = Handler.new cfg
 

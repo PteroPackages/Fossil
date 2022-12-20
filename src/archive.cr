@@ -13,12 +13,10 @@ module Fossil
     end
 
     def save(dir : Path) : Nil
+      Dir.mkdir_p dir
       @files = @sources.map &.save dir
-
-      File.open(dir / "archive.lock") do |file|
-        @created_at = Time.utc
-        to_json file
-      end
+      @created_at = Time.utc
+      File.write(dir / "archive.lock", to_json)
     end
 
     struct Source
@@ -35,10 +33,7 @@ module Fossil
 
       def save(dir : Path) : String
         path = dir / "#{@key}_#{@index}.json"
-
-        File.open(path) do |file|
-          to_json file
-        end
+        File.write path, to_json
 
         path.to_s
       end
