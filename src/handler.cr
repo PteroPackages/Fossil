@@ -6,10 +6,10 @@ class Fossil::Handler
 
   def default_headers : Hash(String, String)
     {
-      "User-Agent" => "Fossil Client v#{VERSION}",
-      "Content-Type" => "application/json",
-      "Accept" => "application/json",
-      "Authorization" => "Bearer #{@config.key}"
+      "User-Agent"    => "Fossil Client v#{VERSION}",
+      "Content-Type"  => "application/json",
+      "Accept"        => "application/json",
+      "Authorization" => "Bearer #{@config.key}",
     }
   end
 
