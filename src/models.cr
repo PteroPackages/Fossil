@@ -27,6 +27,21 @@ module Fossil::Models
     getter meta : Wrapper
   end
 
+  struct FeatureLimits < Base
+    getter allocations : Int32
+    getter backups : Int32
+    getter databases : Int32
+  end
+
+  struct Limits < Base
+    getter memory : Int64
+    getter swap : Int64
+    getter disk : Int64
+    getter io : Int64?
+    getter threads : String?
+    getter oom_disabled : Bool = false
+  end
+
   struct User < Base
     getter id : Int32
     getter external_id : String?
@@ -41,21 +56,6 @@ module Fossil::Models
     getter two_factor : Bool
     getter created_at : String
     getter updated_at : String?
-  end
-
-  struct FeatureLimits < Base
-    getter allocations : Int32
-    getter backups : Int32
-    getter databases : Int32
-  end
-
-  struct Limits < Base
-    getter memory : Int64
-    getter swap : Int64
-    getter disk : Int64
-    getter io : Int64?
-    getter threads : String?
-    getter oom_disabled : Bool = false
   end
 
   struct Server < Base
