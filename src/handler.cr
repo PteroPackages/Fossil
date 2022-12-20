@@ -17,7 +17,7 @@ class Fossil::Handler
     Log.info "Fetching user objects..."
     results = Crest.get "#{@config.url}/api/application/#{path}", headers: default_headers
     data = Models::FractalList(T).from_json results.body
-    Log.info "#{data.data.size} objects received"
+    Log.info "> #{data.data.size} objects received"
 
     parsed = [] of Array(Models::Base)
     parsed << data.data.map &.attributes.as(Models::Base)

@@ -5,6 +5,7 @@ module Fossil::Commands
 
       add_argument "type", desc: "the specific type of archive to create", required: false
       add_option "users", desc: "scope for archiving all users"
+      # add_option "compress", desc: "compresses the archive into a single tar file"
     end
 
     def run(args, options) : Nil
@@ -34,7 +35,7 @@ module Fossil::Commands
         Log.fatal ["Connection to the panel failed:", ex.to_s]
       end
 
-      Log.info "Creating archive with the following scope(s): #{options.options.keys.join(", ")}"
+      Log.info %(Creating archive with the following scope#{"s" if options.options.size > 1}: #{options.options.keys.join ", "})
       archive = Archive.new
       handler = Handler.new cfg
 
@@ -42,7 +43,11 @@ module Fossil::Commands
         archive.sources.concat handler.create_users
       end
 
+      Log.info "Collected all objects, saving..."
       archive.save dir
+
+      # 🗂️ for compressed archive
+      Log.notice ["📦 Archive complete", "Directory: #{dir}", %(Lockfile:  #{dir / "archive.lock"})]
     end
   end
 end
