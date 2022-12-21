@@ -10,13 +10,13 @@ module Fossil::Commands
       id = args.get!("id").as_s
       archives = Dir.children Config.archive_path
       name = case id
-      when "first"
-        archives.first
-      when "last", "latest"
-        archives.last
-      else
-        archives.find { |a| a == id } || Log.fatal "No archive with that ID found"
-      end
+             when "first"
+               archives.first
+             when "last", "latest"
+               archives.last
+             else
+               archives.find { |a| a == id } || Log.fatal "No archive with that ID found"
+             end
 
       case Dir.children(Config.archive_path / name)
       when .includes? "archive.tar.gz"
