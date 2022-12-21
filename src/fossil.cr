@@ -28,6 +28,7 @@ module Fossil
       add_command Commands::ConfigCommand.new
       add_command Commands::SetupCommand.new
       add_command Commands::CreateCommand.new
+      add_command Commands::ListCommand.new
 
       add_option 'v', "version", desc: "get the current version"
     end
