@@ -22,10 +22,10 @@ module Fossil::Commands
       cfg = Config.fetch
       stamp = Time.utc.to_s("%FT%T").gsub(":", "-")
       dir = if options.has? "compress"
-        Path[Dir.tempdir] / stamp
-      else
-        Config.archive_path / stamp
-      end
+              Path[Dir.tempdir] / stamp
+            else
+              Config.archive_path / stamp
+            end
 
       begin
         Dir.mkdir_p dir unless Dir.exists? dir
@@ -66,6 +66,7 @@ module Fossil::Commands
       else
         Log.info "Collected all objects, saving..."
         archive.save dir
+
         Log.notice ["🗂️ Archive complete", "Directory: #{dir}", %(Lockfile:  #{dir / "archive.lock"})]
       end
     end
