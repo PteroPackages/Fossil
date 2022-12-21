@@ -8,7 +8,7 @@ module Fossil::Commands
       add_option "servers", desc: "scope for archiving all servers"
       add_option "nodes", desc: "scope for archiving all nodes"
       add_option "nests", desc: "scope for archiving all nests"
-      # add_option "compress", desc: "compresses the archive into a single tar file"
+      add_option "compress", desc: "compresses the archive into a single tar file"
     end
 
     def run(args, options) : Nil
@@ -20,7 +20,12 @@ module Fossil::Commands
       end
 
       cfg = Config.fetch
-      dir = Config.archive_path / Time.utc.to_s("%FT%T").gsub(":", "-")
+      stamp = Time.utc.to_s("%FT%T").gsub(":", "-")
+      dir = if options.has? "compress"
+        Path[Dir.tempdir] / stamp
+      else
+        Config.archive_path / stamp
+      end
 
       begin
         Dir.mkdir_p dir unless Dir.exists? dir
@@ -47,11 +52,34 @@ module Fossil::Commands
       archive.sources.concat handler.create_nodes if options.has? "nodes"
       archive.sources.concat handler.create_nests if options.has? "nests"
 
-      Log.info "Collected all objects, saving..."
-      archive.save dir
+      if options.has? "compress"
+        Log.info "Collected all objects, compressing..."
+        archive.compress dir
 
-      # 🗂️ for compressed archive
-      Log.notice ["📦 Archive complete", "Directory: #{dir}", %(Lockfile:  #{dir / "archive.lock"})]
+        path = Config.archive_path / stamp
+        Dir.mkdir path
+        path /= "archive.tar.gz"
+        compress(dir, path)
+        FileUtils.rm_rf dir
+
+        Log.notice ["📦 Archive complete", "Path: #{path}"]
+      else
+        Log.info "Collected all objects, saving..."
+        archive.save dir
+        Log.notice ["🗂️ Archive complete", "Directory: #{dir}", %(Lockfile:  #{dir / "archive.lock"})]
+      end
+    end
+
+    private def compress(src : Path, dest : Path) : Nil
+      Crystar::Writer.open(dest.to_s) do |tar|
+        Dir.each_child(src) do |name|
+          File.open(src / name) do |file|
+            header = Crystar::Header.new(name: name, mode: 0o600_i64, size: file.size)
+            tar.write_header header
+            tar.write file.getb_to_end
+          end
+        end
+      end
     end
   end
 end

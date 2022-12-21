@@ -16,6 +16,9 @@ dependencies:
   crest:
     github: mamantoha/crest
 
+  crystar:
+    github: naqvis/crystar
+
 targets:
   fossil:
     main: src/main.cr
