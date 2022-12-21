@@ -29,6 +29,7 @@ module Fossil
       add_command Commands::SetupCommand.new
       add_command Commands::CreateCommand.new
       add_command Commands::ListCommand.new
+      add_command Commands::InfoCommand.new
 
       add_option 'v', "version", desc: "get the current version"
     end
@@ -47,7 +48,7 @@ module Fossil
       Commands:
               list      lists existing archives
               create    creates an archive from the panel
-              status    gets the status of an archive
+              info      gets information about an archive
               restore   restores an archive to the panel
               delete    deletes existing archives
               setup     setup fossil configurations
