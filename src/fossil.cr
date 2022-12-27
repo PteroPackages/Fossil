@@ -79,5 +79,13 @@ module Fossil
     def run(args, options) : Nil
       stdout.puts help_template
     end
+
+    # TODO: fix CLI and remove this
+    def execute(input)
+      super input
+    rescue ex : CLI::CommandError
+      Log.error ex.message.not_nil!
+      stdout.puts help_template
+    end
   end
 end

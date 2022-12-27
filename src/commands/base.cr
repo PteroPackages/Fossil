@@ -31,6 +31,13 @@ module Fossil::Commands
       "fossil" + (self.name == "_main" ? "" : " " + self.name)
     end
 
+    def on_missing_arguments(args)
+      Log.fatal [
+        %(Missing required argument#{"s" if args.size > 1}: #{args.join ","}),
+        "See '$B#{format_name} --help$R' for more information",
+      ]
+    end
+
     def on_unknown_arguments(args)
       format = args.first(5).join ", "
       extra = args.size > 5 ? "(and #{args.size - 5} more)" : ""

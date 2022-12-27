@@ -36,7 +36,7 @@ class Fossil::Handler
   end
 
   private macro handler(route, type)
-    def create_{{ route.id }}(*, exclude : Bool = false, ids : Array(Int32)? = nil,
+    def create_{{route.id}}(*, exclude : Bool = false, ids : Array(Int32)? = nil,
                               from : Int32? = nil, to : Int32? = nil) : Array(Archive::Source)
       results = get_all_pages {{ route }}, {{ type }}
       sources = [] of Archive::Source
