@@ -38,8 +38,9 @@ module Fossil::Commands
         Log.fatal ["Connection to the panel failed:", ex.to_s]
       end
 
-      Log.info %(Creating archive with the following scope#{"s" if options.options.size > 1}: #{options.options.keys.join ", "})
-      archive = Archive.new
+      scopes = options.options.keys
+      Log.info %(Creating archive with the following scope#{"s" if scopes.size > 1}: #{scopes.join ", "})
+      archive = Archive.new scopes
       handler = Handler.new cfg
 
       archive.sources.concat handler.create_users if options.has? "users"

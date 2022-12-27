@@ -4,10 +4,11 @@ module Fossil
 
     property created_at : Time?
     property files : Array(String)
+    property scopes : Array(String)
     @[JSON::Field(ignore: true)]
     property sources : Array(Source) = [] of Source
 
-    def initialize
+    def initialize(@scopes)
       @files = [] of String
       @sources = [] of Source
     end

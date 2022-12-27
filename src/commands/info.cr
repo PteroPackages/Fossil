@@ -50,6 +50,7 @@ module Fossil::Commands
         "📦 " + "#{path.parts[-2]}#{File::SEPARATOR}archive.tar.gz".colorize.bold.to_s,
         "Created: #{arc.created_at}",
         "Size: #{info.size.humanize_bytes}",
+        "Scopes: #{arc.scopes.join ", "}",
       ]
     end
 
@@ -60,6 +61,7 @@ module Fossil::Commands
         "🗂️ " + "#{path.parts[-2]}#{File::SEPARATOR}archive.lock".colorize.bold.to_s,
         "Created: #{arc.created_at}",
         "Size: unknown (#{arc.files.size} file#{"s" if arc.files.size > 1})",
+        "Scopes: #{arc.scopes.join ", "}",
       ]
     end
   end
