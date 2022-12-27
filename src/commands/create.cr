@@ -27,7 +27,7 @@ module Fossil::Commands
       rescue File::AccessDeniedError
         Log.fatal [
           "Failed to create archive directory: permission denied",
-          "Make sure you are running this command #{{{ flag?(:win32) ? "with admin permissions" : "as root user" }}}",
+          Error::PERM_NOTICE,
         ]
       end
 

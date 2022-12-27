@@ -9,6 +9,8 @@ module Fossil
       ConfigInvalidKey
     end
 
+    PERM_NOTICE = %(Make sure you are running this command #{{{ flag?(:win32) ? "with admin permissions" : "as root user" }}})
+
     getter kind : Kind
 
     def initialize(@kind : Kind, cause : Exception? = nil)
@@ -30,7 +32,7 @@ module Fossil
       in Kind::ConfigWriteDenied
         Log.error [
           "Failed to write to config file: permission denied",
-          "Make sure you are running this command #{{{ flag?(:win32) ? "with admin permissions" : "as root user" }}}",
+          PERM_NOTICE,
         ]
       in Kind::ConfigInvalidUrl
         Log.error [

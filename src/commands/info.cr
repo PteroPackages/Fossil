@@ -17,7 +17,7 @@ module Fossil::Commands
             when "last", "latest"
               archives.last
             else
-              archives.find { |a| a == id } || Log.fatal "No archive with that ID found"
+              archives.includes?(id) ? id : Log.fatal "No archive with that ID found"
             end
 
       case Dir.children(Config.archive_path / arc)
