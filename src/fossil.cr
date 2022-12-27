@@ -4,6 +4,7 @@ require "compress/gzip"
 require "crest"
 require "crystar"
 require "ecr/macros"
+require "file_utils"
 require "json"
 require "uri"
 
@@ -29,6 +30,7 @@ module Fossil
       add_command Commands::CreateCommand.new
       add_command Commands::ListCommand.new
       add_command Commands::InfoCommand.new
+      add_command Commands::DeleteCommand.new
 
       add_option 'v', "version", desc: "get the current version"
     end
