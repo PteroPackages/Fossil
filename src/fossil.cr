@@ -4,7 +4,6 @@ require "compress/gzip"
 require "crest"
 require "crystar"
 require "ecr/macros"
-require "file_utils"
 require "json"
 require "uri"
 

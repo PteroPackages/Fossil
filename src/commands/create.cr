@@ -60,7 +60,7 @@ module Fossil::Commands
         Log.info "Collected all objects, saving..."
         archive.save dir
 
-        Log.notice ["🗂️ Archive complete", "Directory: #{dir}", %(Lockfile:  #{dir / "archive.lock"})]
+        Log.notice ["🗂️  Archive complete", "Directory: #{dir}", %(Lockfile:  #{dir / "archive.lock"})]
       end
     end
   end
