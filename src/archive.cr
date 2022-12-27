@@ -5,18 +5,30 @@ module Fossil
     property created_at : Time?
     property files : Array(String)
     @[JSON::Field(ignore: true)]
-    property sources : Array(Source)
+    property sources : Array(Source) = [] of Source
 
     def initialize
       @files = [] of String
       @sources = [] of Source
     end
 
-    def compress(dir : Path) : Nil
-      @files = @sources.map &.compress dir
-      @created_at = Time.utc
-      Compress::Gzip::Writer.open((dir / "archive.lock.gz").to_s) do |gzip|
-        gzip.write to_json.to_slice
+    def compress(dest : Compress::Gzip::Writer) : Nil
+      Crystar::Writer.open(dest) do |tar|
+        @sources.each do |source|
+          @files << source.to_s
+          buf = IO::Memory.new
+          source.to_json buf
+
+          tar.write_header Crystar::Header.new(name: source.to_s, mode: 0o644, size: buf.size)
+          tar.write buf.to_slice
+        end
+
+        @created_at = Time.utc
+        buf = IO::Memory.new
+        to_json buf
+
+        tar.write_header Crystar::Header.new(name: "archive.lock", mode: 0o644, size: buf.size)
+        tar.write buf.to_slice
       end
     end
 
@@ -38,13 +50,8 @@ module Fossil
         @count = data.size
       end
 
-      def compress(dir : Path) : String
-        path = (dir / "#{@key}_#{@index}.json.gz").to_s
-        Compress::Gzip::Writer.open(path) do |gzip|
-          gzip.write to_json.to_slice
-        end
-
-        path
+      def to_s : String
+        "#{@key}_#{@index}.json"
       end
 
       def save(dir : Path) : String

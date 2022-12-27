@@ -20,12 +20,7 @@ module Fossil::Commands
       end
 
       cfg = Config.fetch
-      stamp = Time.utc.to_s("%FT%T").gsub(":", "-")
-      dir = if options.has? "compress"
-              Path[Dir.tempdir] / stamp
-            else
-              Config.archive_path / stamp
-            end
+      dir = Config.archive_path / Time.utc.to_s("%FT%T").gsub(":", "-")
 
       begin
         Dir.mkdir_p dir unless Dir.exists? dir
@@ -54,13 +49,11 @@ module Fossil::Commands
 
       if options.has? "compress"
         Log.info "Collected all objects, compressing..."
-        archive.compress dir
 
-        path = Config.archive_path / stamp
-        Dir.mkdir path
-        path /= "archive.tar.gz"
-        compress(dir, path)
-        FileUtils.rm_rf dir
+        path = dir / "archive.tar.gz"
+        Compress::Gzip::Writer.open(path.to_s) do |gzip|
+          archive.compress gzip
+        end
 
         Log.notice ["📦 Archive complete", "Path: #{path}"]
       else
@@ -68,18 +61,6 @@ module Fossil::Commands
         archive.save dir
 
         Log.notice ["🗂️ Archive complete", "Directory: #{dir}", %(Lockfile:  #{dir / "archive.lock"})]
-      end
-    end
-
-    private def compress(src : Path, dest : Path) : Nil
-      Crystar::Writer.open(dest.to_s) do |tar|
-        Dir.each_child(src) do |name|
-          File.open(src / name) do |file|
-            header = Crystar::Header.new(name: name, mode: 0o600_i64, size: file.size)
-            tar.write_header header
-            tar.write file.getb_to_end
-          end
-        end
       end
     end
   end
