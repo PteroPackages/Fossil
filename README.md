@@ -26,4 +26,4 @@ Make sure to run the `setup.sh` file for development. When building binaries/exe
 
 This repository is managed under the MIT license.
 
-© 2022 PteroPackages
+© 2022-present PteroPackages
