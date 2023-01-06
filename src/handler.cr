@@ -23,7 +23,7 @@ class Fossil::Handler
     parsed << data.data.map &.attributes.as(Models::Base)
 
     if (total = data.meta.pagination.total_pages) > 1
-      (data.meta.pagintation.current_page..total).each do |index|
+      (data.meta.pagination.current_page..total).each do |index|
         results = Crest.get "#{@config.url}/api/application/#{path}?page=#{index}", headers: default_headers
         data = Models::FractalList(T).from_json results.body
 
