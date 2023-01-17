@@ -27,7 +27,7 @@ module Fossil::Commands
       if ex.is_a? CLI::CommandError && (message = ex.message) && message.includes? "not found"
         Log.fatal [
           "Unknown command #{message.split(' ')[1]}",
-          "See '$Bfossil --help$R' for more information"
+          "See '$Bfossil --help$R' for more information",
         ]
       end
 
