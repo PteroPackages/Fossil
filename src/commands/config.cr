@@ -5,26 +5,26 @@ module Fossil::Commands
       @description = "Sets an option in the config to a value."
       add_usage "config set <option> <value>"
 
-      add_argument "option", desc: "the config option to change", required: true
-      add_argument "value", desc: "the value to set", required: true
+      add_argument "option", description: "the config option to change", required: true
+      add_argument "value", description: "the value to set", required: true
     end
 
-    def on_missing_arguments(args)
+    def on_missing_arguments(arguments)
       Log.fatal [
-        %(Missing required argument#{"s" if args.size == 2}: #{args.join ", "}),
+        %(Missing required argument#{"s" if arguments.size == 2}: #{arguments.join ", "}),
         "See '$Bfossil config set --help$R' for more information",
       ]
     end
 
-    def run(args, options) : Nil
-      op = args.get!("option").as_s
+    def run(arguments, options) : Nil
+      op = arguments.get!("option").as_s
 
       unless op == "url" || op == "key"
         Log.fatal ["Invalid config option '#{op}'", "Valid options: url, key"]
       end
 
       cfg = Config.fetch
-      value = args.get!("value").as_s
+      value = arguments.get!("value").as_s
 
       if op == "url"
         cfg.url = value
@@ -47,7 +47,7 @@ module Fossil::Commands
       add_usage "config reset"
     end
 
-    def run(args, options) : Nil
+    def run(arguments, options) : Nil
       Config.default.save
     rescue File::AccessDeniedError
       raise Error.new :config_write_denied
@@ -65,7 +65,7 @@ module Fossil::Commands
       add_command ResetConfigCommand.new
     end
 
-    def run(args, options) : Nil
+    def run(arguments, options) : Nil
       cfg = Config.fetch
       Log.write [cfg.url, cfg.key]
     rescue File::NotFoundError

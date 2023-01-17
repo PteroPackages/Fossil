@@ -3,11 +3,11 @@ module Fossil::Commands
     def setup : Nil
       @name = "delete"
 
-      add_argument "id", desc: "the ID of the archive or a directive", required: true
+      add_argument "id", description: "the ID of the archive or a directive", required: true
     end
 
-    def run(args, options) : Nil
-      id = args.get!("id").as_s
+    def run(arguments, options) : Nil
+      id = arguments.get!("id").as_s
       archives = Dir.children Config.archive_path
       Log.fatal "No archives found" if archives.empty?
 

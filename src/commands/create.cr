@@ -3,15 +3,15 @@ module Fossil::Commands
     def setup : Nil
       @name = "create"
 
-      add_argument "type", desc: "the specific type of archive to create", required: false
-      add_option "users", desc: "scope for archiving all users"
-      add_option "servers", desc: "scope for archiving all servers"
-      add_option "nodes", desc: "scope for archiving all nodes"
-      add_option "nests", desc: "scope for archiving all nests"
-      add_option "compress", desc: "compresses the archive into a single tar file"
+      add_argument "type", description: "the specific type of archive to create", required: false
+      add_option "users", description: "scope for archiving all users"
+      add_option "servers", description: "scope for archiving all servers"
+      add_option "nodes", description: "scope for archiving all nodes"
+      add_option "nests", description: "scope for archiving all nests"
+      add_option "compress", description: "compresses the archive into a single tar file"
     end
 
-    def run(args, options) : Nil
+    def run(arguments, options) : Nil
       if options.empty?
         Log.fatal [
           "At least one scope must be specified to create an archive",

@@ -32,11 +32,11 @@ module Fossil
       add_command Commands::InfoCommand.new
       add_command Commands::DeleteCommand.new
 
-      add_option 'v', "version", desc: "get the current version"
+      add_option 'v', "version", description: "get the current version"
     end
 
     def setup : Nil
-      @name = "_main"
+      @name = "app"
     end
 
     def help_template
@@ -63,7 +63,7 @@ module Fossil
       HELP
     end
 
-    def pre_run(args, options)
+    def pre_run(arguments, options)
       case options
       when .has? "help"
         stdout.puts help_template
@@ -78,15 +78,7 @@ module Fossil
       end
     end
 
-    def run(args, options) : Nil
-      stdout.puts help_template
-    end
-
-    # TODO: fix CLI and remove this
-    def execute(input)
-      super input
-    rescue ex : CLI::CommandError
-      Log.error ex.message.not_nil!
+    def run(arguments, options) : Nil
       stdout.puts help_template
     end
   end

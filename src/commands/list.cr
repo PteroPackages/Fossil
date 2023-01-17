@@ -3,10 +3,10 @@ module Fossil::Commands
     def setup : Nil
       @name = "list"
 
-      add_option "clean", desc: "formats the output without custom text"
+      add_option "clean", description: "formats the output without custom text"
     end
 
-    def run(args, options) : Nil
+    def run(arguments, options) : Nil
       dir = Config.archive_path
       archives = [] of {String, Bool, Int32}
 

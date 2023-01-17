@@ -5,7 +5,7 @@ module Fossil::Commands
       @description = "Sets up Fossil configurations and directories."
     end
 
-    def run(args, options) : Nil
+    def run(arguments, options) : Nil
       if Dir.exists? Config.config_path.parent
         Log.info "Found config directory (#{Config.config_path.parent})"
       else
