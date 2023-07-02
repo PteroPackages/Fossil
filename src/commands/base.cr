@@ -1,5 +1,5 @@
 module Fossil::Commands
-  abstract class Base < CLI::Command
+  abstract class Base < Cling::Command
     def initialize
       super
 
@@ -71,7 +71,7 @@ module Fossil::Commands
     def on_unknown_options(options : Array(String))
       format = options.first(5).join ", "
       if options.size > 5
-        format += " (and #{args.size - 5} more)"
+        format += " (and #{options.size - 5} more)"
       end
 
       error "Unexpected option#{"s" if options.size > 1}: #{format}"
