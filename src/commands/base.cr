@@ -41,18 +41,21 @@ module Fossil::Commands
     end
 
     def on_error(ex : Exception)
-      raise ex if ex.is_a? SystemExit
-
-      if ex.is_a? Cling::CommandError
-        error ex.to_s
+      case ex
+      when SystemExit
+        raise ex
+      when Cling::CommandError
+        error ex
         error "See 'fossil --help' for more information"
-        return
+      when Fossil::Config::Error
+        error "Error while loading configuration:"
+        error ex
+      else
+        error "Unexpected exception:"
+        error ex
+        error "Please report this on the Fossil GitHub issues:"
+        error "https://github.com/PteroPackages/Fossil/issues"
       end
-
-      error "Unexpected exception:"
-      error ex
-      error "Please report this on the Fossil GitHub issues:"
-      error "https://github.com/PteroPackages/Fossil/issues"
     end
 
     def on_missing_arguments(args : Array(String))
