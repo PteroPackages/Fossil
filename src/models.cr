@@ -1,39 +1,32 @@
 module Fossil::Models
-  abstract struct Base
+  struct FeatureLimits
     include JSON::Serializable
-  end
 
-  struct FractalItem(T) < Base
-    getter object : String
-    getter attributes : T
-  end
-
-  struct Pagination < Base
-    getter count : Int32
-    getter total : Int32
-    getter per_page : Int32
-    getter current_page : Int32
-    getter total_pages : Int32
-  end
-
-  # TODO: get rid of this...
-  struct Wrapper < Base
-    getter pagination : Pagination
-  end
-
-  struct FractalList(T) < Base
-    getter object : String
-    getter data : Array(FractalItem(T))
-    getter meta : Wrapper
-  end
-
-  struct FeatureLimits < Base
     getter allocations : Int32
     getter backups : Int32
     getter databases : Int32
   end
 
-  struct Limits < Base
+  struct FractalItem
+    include JSON::Serializable
+    
+    use_json_discriminator "object", {nest: Nest, node: Node, user: User, server: Server}
+
+    getter object : String
+  end
+
+  struct FractalList
+    include JSON::Serializable
+
+    getter object : String
+    getter data : Array(FractalItem)
+    @[JSON::Field(key: "meta", root: "pagination")]
+    getter pagination : Pagination
+  end
+
+  struct Limits
+    include JSON::Serializable
+
     getter memory : Int64
     getter swap : Int64
     getter disk : Int64
@@ -42,7 +35,9 @@ module Fossil::Models
     getter oom_disabled : Bool = false
   end
 
-  struct Nest < Base
+  struct Nest
+    include JSON::Serializable
+
     getter id : Int32
     getter uuid : String
     getter author : String
@@ -52,7 +47,9 @@ module Fossil::Models
     getter updated_at : String?
   end
 
-  struct Node < Base
+  struct Node
+    include JSON::Serializable
+
     getter id : Int32
     getter name : String
     getter description : String?
@@ -74,7 +71,9 @@ module Fossil::Models
     getter updated_at : String?
   end
 
-  struct User < Base
+  struct User
+    include JSON::Serializable
+
     getter id : Int32
     getter external_id : String?
     getter uuid : String
@@ -90,7 +89,19 @@ module Fossil::Models
     getter updated_at : String?
   end
 
-  struct Server < Base
+  struct Pagination
+    include JSON::Serializable
+
+    getter count : Int32
+    getter total : Int32
+    getter per_page : Int32
+    getter current_page : Int32
+    getter total_pages : Int32
+  end
+
+  struct Server
+    include JSON::Serializable
+
     getter id : Int32
     getter external_id : String?
     getter uuid : String
