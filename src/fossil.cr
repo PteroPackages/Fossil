@@ -1,4 +1,4 @@
-require "cli"
+require "cling"
 require "colorize"
 require "compress/gzip"
 require "crest"

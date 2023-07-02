@@ -6,11 +6,11 @@ crystal: 1.3.2
 repository: https://github.com/PteroPackages/Fossil
 
 authors:
-  - Devonte <https://github.com/devnote-dev>
+  - Devonte W <https://github.com/devnote-dev>
 
 dependencies:
-  cli:
-    github: devnote-dev/cli.cr
+  cling:
+    github: devnote-dev/cling
     branch: main
 
   crest:
