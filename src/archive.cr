@@ -2,13 +2,32 @@ module Fossil
   class Archive
     include JSON::Serializable
 
-    property created_at : Time?
+    struct Source
+      include JSON::Serializable
+
+      getter id : String
+      getter scope : String
+      getter index : Int32
+      getter count : Int32
+      getter data : Array(JSON::Any)
+
+      def initialize(@id, @scope, @index, @data)
+        @count = data.size
+      end
+
+      def to_s : String
+        "#{@id}-#{@scope}-#{@index}.json"
+      end
+    end
+
+    property timestamp : Int32
     property files : Array(String)
     property scopes : Array(String)
     @[JSON::Field(ignore: true)]
-    property sources : Array(Source) = [] of Source
+    property sources : Array(Source)
 
     def initialize(@scopes)
+      @timestamp = 0
       @files = [] of String
       @sources = [] of Source
     end
@@ -24,42 +43,13 @@ module Fossil
           tar.write buf.to_slice
         end
 
-        @created_at = Time.utc
+        @timestamp = Time.utc.to_unix
         buf = IO::Memory.new
         to_json buf
 
+        # TODO: maybe change header name
         tar.write_header Crystar::Header.new(name: "archive.lock", mode: 0o644, size: buf.size)
         tar.write buf.to_slice
-      end
-    end
-
-    def save(dir : Path) : Nil
-      @files = @sources.map &.save dir
-      @created_at = Time.utc
-      File.write(dir / "archive.lock", to_json)
-    end
-
-    struct Source
-      include JSON::Serializable
-
-      getter key : String
-      getter index : Int32
-      getter count : Int32
-      getter data : Array(Models::Base)
-
-      def initialize(@key, @index, @data)
-        @count = data.size
-      end
-
-      def to_s : String
-        "#{@key}_#{@index}.json"
-      end
-
-      def save(dir : Path) : String
-        path = dir / "#{@key}_#{@index}.json"
-        File.write path, to_json
-
-        path.to_s
       end
     end
   end
