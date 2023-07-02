@@ -1,16 +1,19 @@
 module Fossil::Commands
-  abstract class BaseCommand < CLI::Command
-    @inherit_options = true
-
+  abstract class Base < CLI::Command
     def initialize
       super
 
+      @debug = false
+      @inherit_options = true
+      add_option "debug", description: "print debug information"
       add_option "no-color", description: "disable ansi color codes"
-      add_option "trace", description: "log error stack traces"
       add_option 'h', "help", description: "get help information"
     end
 
-    def pre_run(arguments, options)
+    def pre_run(arguments : Cling::Arguments, options : Cling::Options) : Bool
+      @debug = true if options.has? "debug"
+      Colorize.enabled = false if options.has? "no-color"
+
       if options.has? "help"
         stdout.puts help_template
 
@@ -20,49 +23,58 @@ module Fossil::Commands
       end
     end
 
-    def on_error(ex : Exception)
-      return if ex.is_a? SystemExit
-      return ex.print_log if ex.is_a? Error
+    protected def debug(data : _) : Nil
+      return unless @debug
+      stdout << "Debug: " << data << '\n'
+    end
 
-      if ex.is_a? CLI::CommandError && (message = ex.message) && message.includes? "not found"
-        Log.fatal [
-          "Unknown command #{message.split(' ')[1]}",
-          "See '$Bfossil --help$R' for more information",
-        ]
+    protected def info(data : _) : Nil
+      stdout.puts data
+    end
+
+    protected def warn(data : _) : Nil
+      stdout << "Warning: ".colorize.yellow << data << '\n'
+    end
+
+    protected def error(data : _) : Nil
+      stderr << "Error: ".colorize.red << data << '\n'
+    end
+
+    def on_error(ex : Exception)
+      raise ex if ex.is_a? SystemExit
+
+      if ex.is_a? Cling::CommandError
+        error ex.to_s
+        error "See 'fossil --help' for more information"
+        return
       end
 
-      Error.new(:uncaught, ex).print_log
+      error "Unexpected exception:"
+      error ex
+      error "Please report this on the Fossil GitHub issues:"
+      error "https://github.com/PteroPackages/Fossil/issues"
     end
 
-    def format_name : String
-      "fossil" + (self.name == "app" ? "" : " " + self.name)
+    def on_missing_arguments(args : Array(String))
+      error %(Missing required argument#{"s" if args.size > 1}: #{args.join ","})
     end
 
-    def on_missing_arguments(arguments)
-      Log.fatal [
-        %(Missing required argument#{"s" if arguments.size > 1}: #{arguments.join ","}),
-        "See '$B#{format_name} --help$R' for more information",
-      ]
+    def on_unknown_arguments(args : Array(String))
+      format = args.first(5).join ", "
+      if args.size > 5
+        format += " (and #{args.size - 5} more)"
+      end
+
+      error "Unexpected argument#{"s" if args.size > 1}: #{format}"
     end
 
-    def on_unknown_arguments(arguments)
-      format = arguments.first(5).join ", "
-      extra = arguments.size > 5 ? "(and #{arguments.size - 5} more)" : ""
-
-      Log.fatal [
-        "Unknown arguments for #{format_name} command: #{format} #{extra}",
-        "See '$B#{format_name} --help$R' for more information",
-      ]
-    end
-
-    def on_unknown_options(options)
+    def on_unknown_options(options : Array(String))
       format = options.first(5).join ", "
-      extra = options.size > 5 ? "(and #{options.size - 5} more)" : ""
+      if options.size > 5
+        format += " (and #{args.size - 5} more)"
+      end
 
-      Log.fatal [
-        "Unknown options for #{format_name} command: #{format} #{extra}",
-        "See '$B#{format_name} --help$R' for more information",
-      ]
+      error "Unexpected option#{"s" if options.size > 1}: #{format}"
     end
   end
 end

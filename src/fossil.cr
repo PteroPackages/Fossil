@@ -19,67 +19,41 @@ require "./models"
 Colorize.on_tty_only!
 
 module Fossil
-  VERSION = "0.4.0" # old
+  VERSION = "1.0.0"
 
-  class App < Commands::BaseCommand
-    def initialize
-      super
-
-      add_command Commands::ConfigCommand.new
-      add_command Commands::SetupCommand.new
-      add_command Commands::CreateCommand.new
-      add_command Commands::ListCommand.new
-      add_command Commands::InfoCommand.new
-      add_command Commands::DeleteCommand.new
-
-      add_option 'v', "version", description: "get the current version"
-    end
-
+  class App < Commands::Base
     def setup : Nil
-      @name = "app"
+      @name = "main"
+
+      add_command Commands::Config.new
     end
 
-    def help_template
-      <<-HELP
-      Fossil - Pterodactyl Archive Manager
-
-      Usage:
-              fossil [options] <command> [arguments]
-
-      Commands:
-              list      lists existing archives
-              create    creates an archive from the panel
-              info      gets information about an archive
-              restore   restores an archive to the panel
-              delete    deletes existing archives
-              setup     setup fossil configurations
-              config    fossil config management
-
-      Global Options:
-              --no-color      disable ansi color codes
-              --trace         log error stack traces
-              -h, --help      get help information
-              -v, --version   get the current version
-      HELP
-    end
-
-    def pre_run(arguments, options)
-      case options
-      when .has? "help"
-        stdout.puts help_template
-
-        false
-      when .has? "version"
-        stdout.puts "Fossil version #{VERSION}"
-
-        false
-      else
-        true
-      end
-    end
-
-    def run(arguments, options) : Nil
+    def run(arguments : Cling::Arguments, options : Cling::Options) : Nil
       stdout.puts help_template
     end
+
+    # def help_template
+    #   <<-HELP
+    #   Fossil - Pterodactyl Archive Manager
+
+    #   Usage:
+    #           fossil [options] <command> [arguments]
+
+    #   Commands:
+    #           list      lists existing archives
+    #           create    creates an archive from the panel
+    #           info      gets information about an archive
+    #           restore   restores an archive to the panel
+    #           delete    deletes existing archives
+    #           setup     setup fossil configurations
+    #           config    fossil config management
+
+    #   Global Options:
+    #           --no-color      disable ansi color codes
+    #           --trace         log error stack traces
+    #           -h, --help      get help information
+    #           -v, --version   get the current version
+    #   HELP
+    # end
   end
 end
