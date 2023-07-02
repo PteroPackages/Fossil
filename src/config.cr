@@ -1,52 +1,47 @@
-module Fossil
-  class Config
-    property url : String
-    property key : String
+module Fossil::Config
+  CACHE_DIR = begin
+    {% if flag?(:win32) %}
+      Path[::ENV["LOCALAPPDATA"]] / "fossil"
+    {% else %}
+      if cache = ::ENV["XDG_CACHE_HOME"]?
+        Path[cache] / "fossil"
+      else
+        Path.home / ".config" / "fossil"
+      end
+    {% end %}
+  end
 
-    def self.archive_path : Path
-      {% if flag?(:win32) %}
-        Path[ENV["APPDATA"]] / "Fossil" / "Archives"
-      {% else %}
-        Path["/lib/fossil/archives"]
-      {% end %}
-    end
+  LIBRARY_DIR = begin
+    {% if flag?(:win32) %}
+      Path[ENV["APPDATA"]] / "fossil"
+    {% else %}
+      if data = ENV["XDG_DATA_HOME"]?
+        Path[data] / "fossil"
+      else
+        Path.home / ".local" / "share" / "fossil"
+      end
+    {% end %}
+  end
 
-    def self.cache_path : Path
-      {% if flag?(:win32) %}
-        Path[ENV["APPDATA"]] / "Fossil" / "Cache"
-      {% else %}
-        Path["/lib/fossil/cache"]
-      {% end %}
-    end
+  class Error < Exception
+  end
 
-    def self.config_path : Path
-      {% if flag?(:win32) %}
-        Path[ENV["APPDATA"]] / "Fossil" / "fossil.cfg"
-      {% else %}
-        Path["/etc/fossil.conf"]
-      {% end %}
-    end
+  class_property url : String { raise "" }
+  class_property key : String { raise "" }
 
-    def self.fetch
-      data = File.read(config_path).lines
-      raise Error.new :config_not_set unless data.size >= 2
+  def self.load : Nil
+    data = File.read_lines CACHE_DIR / "fossil.conf"
 
-      url, key = data
-      URI.parse(url) rescue raise Error.new :config_invalid_url
-      raise Error.new :config_invalid_key unless key[0..4] == "ptlc_"
+    raise Error.new "Invalid format (url-key)" unless data.size == 2
+    URI.parse data[0] rescue raise Error.new "Invalid URL format"
+    raise "Invalid API key format (must start with 'ptlc_')" unless data[1].starts_with? "ptlc_"
 
-      new url, key
-    end
+    @@url, @@key = data
+  rescue File::Error
+    raise Error.new "File not found (#{CACHE_DIR / "fossil.conf"})"
+  end
 
-    def self.default
-      new "https://pterodactyl.test", "ptlc_your_ap1_k3y"
-    end
-
-    def initialize(@url, @key)
-    end
-
-    def save : Nil
-      File.write self.class.config_path, "#{@url}\n#{@key}"
-    end
+  def self.save : Nil
+    File.write(CACHE_DIR / "fossil.conf", "#{@@url}\n#{@@key}")
   end
 end
