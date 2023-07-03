@@ -3,8 +3,6 @@ require "colorize"
 require "compress/gzip"
 require "crest"
 require "crystar"
-require "ecr/macros"
-require "file_utils"
 require "json"
 require "uri"
 
@@ -12,7 +10,6 @@ require "./archive"
 require "./commands/*"
 require "./config"
 require "./http"
-require "./log"
 require "./models"
 
 Colorize.on_tty_only!
