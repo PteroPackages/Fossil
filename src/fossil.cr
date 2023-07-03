@@ -12,6 +12,7 @@ require "./archive"
 require "./commands/base"
 require "./commands/create"
 require "./commands/config"
+require "./commands/env"
 require "./config"
 require "./http"
 require "./log"
@@ -28,6 +29,7 @@ module Fossil
 
       add_command Commands::Create.new
       add_command Commands::Config.new
+      add_command Commands::Env.new
     end
 
     def run(arguments : Cling::Arguments, options : Cling::Options) : Nil
