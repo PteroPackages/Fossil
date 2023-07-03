@@ -25,7 +25,7 @@ module Fossil
     property files : Array(String)
     property scopes : Array(String)
     @[JSON::Field(ignore: true)]
-    property sources : Array(Source)
+    property sources : Array(Source) = [] of Source
 
     def initialize(@id, @scopes)
       @timestamp = 0
