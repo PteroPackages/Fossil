@@ -2,9 +2,9 @@ module Fossil::HTTP
   extend self
 
   DEFAULT_HEADERS = {
-    "User-Agent"    => "Fossil Client v#{VERSION}",
-    "Content-Type"  => "application/json",
-    "Accept"        => "application/json",
+    "User-Agent"   => "Fossil Client v#{VERSION}",
+    "Content-Type" => "application/json",
+    "Accept"       => "application/json",
   }
 
   def test_connection : Nil

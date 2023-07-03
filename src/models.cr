@@ -9,7 +9,7 @@ module Fossil::Models
 
   struct FractalItem
     include JSON::Serializable
-    
+
     use_json_discriminator "object", {nest: Nest, node: Node, user: User, server: Server}
 
     getter object : String
@@ -32,7 +32,7 @@ module Fossil::Models
     getter disk : Int64
     getter io : Int64?
     getter threads : String?
-    getter oom_disabled : Bool = false
+    getter? oom_disabled : Bool = false
   end
 
   struct Nest
@@ -54,10 +54,10 @@ module Fossil::Models
     getter name : String
     getter description : String?
     getter location_id : Int32
-    getter public : Bool
+    getter? public : Bool
     getter fqdn : String
     getter scheme : String
-    getter behind_proxy : Bool
+    getter? behind_proxy : Bool
     getter memory : Int64
     getter memory_overallocate : Int64
     getter disk : Int64
@@ -65,7 +65,7 @@ module Fossil::Models
     getter daemon_base : String
     getter daemon_sftp : Int64
     getter daemon_listen : Int64
-    getter maintenance_mode : Bool
+    getter? maintenance_mode : Bool
     getter upload_size : Int64
     getter created_at : String
     getter updated_at : String?
@@ -82,9 +82,9 @@ module Fossil::Models
     getter first_name : String
     getter last_name : String
     getter language : String
-    getter root_admin : Bool
+    getter? root_admin : Bool
     @[JSON::Field(key: "2fa")]
-    getter two_factor : Bool
+    getter? two_factor : Bool
     getter created_at : String
     getter updated_at : String?
   end
@@ -109,7 +109,7 @@ module Fossil::Models
     getter name : String
     getter description : String?
     getter status : String?
-    getter suspended : Bool
+    getter? suspended : Bool
     getter limits : Limits
     getter feature_limits : FeatureLimits
     getter user : Int32

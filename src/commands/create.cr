@@ -33,6 +33,7 @@ module Fossil::Commands
 
       info "Creating archive with the following scopes:"
       info scopes.join ", "
+      info ""
 
       archive = Archive.new id, scopes
       archive.sources.concat HTTP.create_user_source(id) if options.has? "users"

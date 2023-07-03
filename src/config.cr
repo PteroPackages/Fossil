@@ -45,9 +45,8 @@ module Fossil::Config
 
   def self.load_unchecked : Nil
     data = File.read_lines CACHE_DIR / "fossil.conf"
-    if data.size == 2
-      @@url, @@key = data
-    end
+    return unless data.size == 2
+    @@url, @@key = data
   end
 
   def self.save : Nil
