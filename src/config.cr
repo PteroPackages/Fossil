@@ -31,10 +31,12 @@ module Fossil::Config
 
   def self.load : Nil
     data = File.read_lines CACHE_DIR / "fossil.conf"
-
     raise Error.new "Invalid format (url-key)" unless data.size == 2
-    URI.parse data[0] rescue raise Error.new "Invalid URL format"
-    raise "Invalid API key format (must start with 'ptlc_')" unless data[1].starts_with? "ptlc_"
+
+    uri = URI.parse data[0] rescue raise Error.new "Invalid URL format"
+    raise Error.new "Missing URL host/scheme" if uri.host.nil? || uri.scheme.nil?
+    raise Error.new "URL should not contain paths" unless uri.path.nil? || uri.path.empty?
+    raise Error.new "Invalid API key format (must start with 'ptlc_')" unless data[1].starts_with? "ptlc_"
 
     @@url, @@key = data
   rescue File::Error
