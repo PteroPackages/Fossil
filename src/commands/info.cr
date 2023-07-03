@@ -1,68 +1,55 @@
 module Fossil::Commands
-  class InfoCommand < BaseCommand
+  class Info < Base
     def setup : Nil
       @name = "info"
 
-      add_argument "id", description: "the ID of the archive or a directive", required: true
+      add_argument "id"
     end
 
-    def run(arguments, options) : Nil
-      id = arguments.get!("id").as_s
-      archives = Dir.children Config.archive_path
-      Log.fatal "No archives found" if archives.empty?
-
-      arc = case id
-            when "first"
-              archives.first
-            when "last", "latest"
-              archives.last
-            else
-              archives.includes?(id) ? id : Log.fatal "No archive with that ID found"
-            end
-
-      case Dir.children(Config.archive_path / arc)
-      when .includes? "archive.tar.gz"
-        format_compressed Config.archive_path / arc / "archive.tar.gz"
-      when .includes? "archive.lock"
-        format_standard Config.archive_path / arc / "archive.lock"
-      else
-        Log.fatal "Unknown archive format; lockfile or tarfile not found"
+    def run(arguments : Cling::Arguments, options : Cling::Options) : Nil
+      archives = Dir.children Fossil::Config::LIBRARY_DIR
+      if archives.empty?
+        error "No archives found"
+        system_exit
       end
-    end
 
-    private def format_compressed(path : Path) : Nil
-      info = File.info path
-      arc = uninitialized Archive
+      id = arguments.get("id").as_s
+      name = case id
+             when "first", "latest"
+               archives.first
+             when "last"
+               archives.last
+             else
+               if archives.includes? id
+                 id
+               else
+                 error "No archive with that ID found"
+                 system_exit
+               end
+             end
+
+      path = Fossil::Config::LIBRARY_DIR / name
+      archive = uninitialized Archive
 
       File.open(path) do |file|
         Compress::Gzip::Reader.open(file) do |gzip|
           Crystar::Reader.open(gzip) do |tar|
             tar.each_entry do |entry|
-              next unless entry.name == "archive.lock"
-              arc = Archive.from_json entry.io
+              next unless entry.name.ends_with? "-archive.json"
+              archive = Archive.from_json entry.io
               break
             end
           end
         end
       end
 
-      Log.info [
-        "📦 " + "#{path.parts[-2]}#{File::SEPARATOR}archive.tar.gz".colorize.bold.to_s,
-        "Created: #{arc.created_at}",
-        "Size: #{info.size.humanize_bytes}",
-        "Scopes: #{arc.scopes.join ", "}",
-      ]
-    end
-
-    private def format_standard(path : Path) : Nil
-      arc = Archive.from_json File.read path
-
-      Log.info [
-        "🗂️ " + "#{path.parts[-2]}#{File::SEPARATOR}archive.lock".colorize.bold.to_s,
-        "Created: #{arc.created_at}",
-        "Size: unknown (#{arc.files.size} file#{"s" if arc.files.size > 1})",
-        "Scopes: #{arc.scopes.join ", "}",
-      ]
+      info <<-INFO
+        ID:      #{archive.id}
+        Created: #{Time.unix archive.timestamp}
+        Scopes:  #{archive.scopes.join ", "}
+        Files:
+          - #{archive.files.join("\n - ")}
+        INFO
     end
   end
 end
