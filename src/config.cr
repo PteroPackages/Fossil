@@ -26,8 +26,8 @@ module Fossil::Config
   class Error < Exception
   end
 
-  class_property url : String { raise "" }
-  class_property key : String { raise "" }
+  class_property url : String { "" }
+  class_property key : String { "" }
 
   def self.load : Nil
     data = File.read_lines CACHE_DIR / "fossil.conf"
