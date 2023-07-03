@@ -20,13 +20,14 @@ module Fossil
       end
     end
 
-    property timestamp : Int32
+    property id : String
+    property timestamp : Int64
     property files : Array(String)
     property scopes : Array(String)
     @[JSON::Field(ignore: true)]
     property sources : Array(Source)
 
-    def initialize(@scopes)
+    def initialize(@id, @scopes)
       @timestamp = 0
       @files = [] of String
       @sources = [] of Source
