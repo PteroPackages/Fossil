@@ -48,13 +48,13 @@ module Fossil::Commands
       end
 
       conf = Fossil::Config::CACHE_DIR / "fossil.conf"
-      unless File.exists? conf
-        begin
-          File.touch conf
-        rescue ex
-          error "Failed to create Fossil configuration file:"
-          error ex
-        end
+      return unless File.exists? conf
+
+      begin
+        File.touch conf
+      rescue ex
+        error "Failed to create Fossil configuration file:"
+        error ex
       end
     end
   end
