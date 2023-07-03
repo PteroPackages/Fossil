@@ -10,9 +10,10 @@ require "uri"
 
 require "./archive"
 require "./commands/base"
+require "./commands/create"
 require "./commands/config"
 require "./config"
-require "./handler"
+require "./http"
 require "./log"
 require "./models"
 
