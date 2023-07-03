@@ -1,6 +1,6 @@
 name: fossil
-description: a pterodactyl archive manager
-version: 0.4.0
+description: A Pterodactyl archive manager
+version: 1.0.0
 crystal: 1.3.2
 
 repository: https://github.com/PteroPackages/Fossil
@@ -18,6 +18,11 @@ dependencies:
 
   crystar:
     github: naqvis/crystar
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 1.4.0
 
 targets:
   fossil:
