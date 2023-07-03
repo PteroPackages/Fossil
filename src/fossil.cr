@@ -12,7 +12,6 @@ require "./archive"
 require "./commands/base"
 require "./commands/config"
 require "./config"
-require "./errors"
 require "./handler"
 require "./log"
 require "./models"
@@ -26,6 +25,7 @@ module Fossil
     def setup : Nil
       @name = "main"
 
+      add_command Commands::Create.new
       add_command Commands::Config.new
     end
 
@@ -56,5 +56,8 @@ module Fossil
     #           -v, --version   get the current version
     #   HELP
     # end
+  end
+
+  class SystemExit < Exception
   end
 end

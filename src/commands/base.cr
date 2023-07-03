@@ -40,6 +40,10 @@ module Fossil::Commands
       stderr << "Error: ".colorize.red << data << '\n'
     end
 
+    protected def system_exit : NoReturn
+      raise SystemExit.new
+    end
+
     def on_error(ex : Exception)
       case ex
       when SystemExit
