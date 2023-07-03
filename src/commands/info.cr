@@ -55,7 +55,7 @@ module Fossil::Commands
         Created: #{Time.unix archive.timestamp}
         Scopes:  #{archive.scopes.join ", "}
         Files:
-          - #{archive.files.join("\n - ")}
+         - #{archive.files.join("\n - ")}
         INFO
     end
   end

@@ -43,17 +43,32 @@ module Fossil::Commands
       info ""
 
       archive = Archive.new id, scopes
-      archive.sources.concat HTTP.create_user_source(id) if options.has? "users"
-      archive.sources.concat HTTP.create_server_source(id) if options.has? "servers"
-      archive.sources.concat HTTP.create_node_source(id) if options.has? "nodes"
-      archive.sources.concat HTTP.create_nest_source(id) if options.has? "nests"
+      if options.has? "users"
+        info "> Fetching user sources"
+        archive.sources.concat HTTP.create_user_source(id)
+      end
+
+      if options.has? "servers"
+        info "> Fetching server sources"
+        archive.sources.concat HTTP.create_server_source(id)
+      end
+
+      if options.has? "nodes"
+        info "> Fetching node sources"
+        archive.sources.concat HTTP.create_node_source(id)
+      end
+
+      if options.has? "nests"
+        info "> Fetching nest sources"
+        archive.sources.concat HTTP.create_nest_source(id)
+      end
 
       Compress::Gzip::Writer.open(file) do |gzip|
         archive.compress gzip
       end
       file.close
 
-      info "📦 Archive complete"
+      info "\n📦 Archive complete"
       info "Path: #{path}"
     end
   end
