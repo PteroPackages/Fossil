@@ -10,7 +10,7 @@ module Fossil::Commands
     end
 
     def run(arguments : Cling::Arguments, options : Cling::Options) : Nil
-      Fossil::Config.load
+      Fossil::Config.load_unchecked
 
       if options.empty?
         info Fossil::Config.url

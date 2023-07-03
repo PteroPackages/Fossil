@@ -43,6 +43,13 @@ module Fossil::Config
     raise Error.new "File not found (#{CACHE_DIR / "fossil.conf"})"
   end
 
+  def self.load_unchecked : Nil
+    data = File.read_lines CACHE_DIR / "fossil.conf"
+    if data.size == 2
+      @@url, @@key = data
+    end
+  end
+
   def self.save : Nil
     File.write(CACHE_DIR / "fossil.conf", "#{@@url}\n#{@@key}")
   end
