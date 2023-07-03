@@ -1,36 +1,14 @@
 module Fossil::Commands
-  class ListCommand < BaseCommand
+  class List < Base
     def setup : Nil
       @name = "list"
 
       add_option "clean", description: "formats the output without custom text"
     end
 
-    def run(arguments, options) : Nil
-      dir = Config.archive_path
-      archives = [] of {String, Bool, Int32}
-
-      Dir.each_child(dir) do |name|
-        next unless Dir.exists?(dir / name)
-        child = Dir.children(dir / name)
-
-        if child.size == 1 && child[0] == "archive.tar.gz"
-          archives << {name, true, 1}
-        else
-          archives << {name, false, child.size}
-        end
-      end
-
-      if options.has? "clean"
-        archives.each do |(name, comp, size)|
-          Log.write %(#{name} (#{size}) #{comp ? "compressed" : "standard"})
-        end
-      else
-        Log.info ["🗂️  - standard archive", "📦 - compressed archive"]
-        archives.each do |(name, comp, size)|
-          Log.write %(#{comp ? "📦" : "🗂️ "} (#{size}) > #{name})
-        end
-      end
+    def run(arguments : Cling::Arguments, options : Cling::Options) : Nil
+      archives = Dir.children(Fossil::Config::LIBRARY_DIR).select &.ends_with? ".tar.gz"
+      archives.each { |a| info a }
     end
   end
 end
