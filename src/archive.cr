@@ -48,8 +48,7 @@ module Fossil
         buf = IO::Memory.new
         to_json buf
 
-        # TODO: maybe change header name
-        tar.write_header Crystar::Header.new(name: "archive.lock", mode: 0o644, size: buf.size)
+        tar.write_header Crystar::Header.new(name: "#{@id}-archive.json", mode: 0o644, size: buf.size)
         tar.write buf.to_slice
       end
     end
