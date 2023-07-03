@@ -2,11 +2,18 @@ module Fossil::Commands
   class Create < Base
     def setup : Nil
       @name = "create"
+      @summary = "create an archive"
+      @description = <<-DESC
+        Creates an archive with the specified scope flags. At least one scope must be
+        specified to create an archive.
+        DESC
 
-      add_option "users"
-      add_option "servers"
-      add_option "nodes"
-      add_option "nests"
+      add_usage "fossil create <scope...> [options]"
+
+      add_option "users", description: "scope for archiving all users"
+      add_option "servers", description: "scope for archiving all servers"
+      add_option "nodes", description: "scope for archiving all nodes"
+      add_option "nests", description: "scope for archiving all nests"
     end
 
     def run(arguments : Cling::Arguments, options : Cling::Options) : Nil

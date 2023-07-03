@@ -5,6 +5,8 @@ module Fossil::Commands
       @summary = "fossil config management"
       @description = "Shows the current config or modifies fields with the given flags."
 
+      add_usage "fossil config [--url <url>] [--key <key>] [options]"
+
       add_option "url", description: "the url to set", type: :single
       add_option "key", description: "the key to set", type: :single
     end

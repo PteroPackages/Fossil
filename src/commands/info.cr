@@ -2,8 +2,15 @@ module Fossil::Commands
   class Info < Base
     def setup : Nil
       @name = "info"
+      @summary = "get information about an archive"
+      @description = <<-DESC
+        Gets information about an archive by its ID. Use "first" or "latest" to get the
+        latest archive, or "last" to get the last available archive.
+        DESC
 
-      add_argument "id"
+      add_usage "fossil info <id> [options]"
+
+      add_argument "id", description: %(the ID of the archive (or "first", "latest", "last")), required: true
     end
 
     def run(arguments : Cling::Arguments, options : Cling::Options) : Nil

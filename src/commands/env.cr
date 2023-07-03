@@ -2,10 +2,18 @@ module Fossil::Commands
   class Env < Base
     def setup : Nil
       @name = "env"
+      @summary = "fossil environment management"
+      @description = <<-DESC
+        Manages the Fossil environment (system paths). Specify a Fossil environment name
+        to print out its path.
+        DESC
+
+      add_usage "fossil env [name] [options]"
+      add_usage "fossil env init [options]"
 
       add_command Init.new
 
-      add_argument "name"
+      add_argument "name", description: "the name of the fossil environment"
     end
 
     def run(arguments : Cling::Arguments, options : Cling::Options) : Nil
@@ -26,6 +34,10 @@ module Fossil::Commands
   class Init < Base
     def setup : Nil
       @name = "init"
+      @summary = "initialize the fossil environment"
+      @description = "Initializes the system paths and configuration file for Fossil."
+
+      add_usage "fossil env init [options]"
     end
 
     def run(arguments : Cling::Arguments, options : Cling::Options) : Nil
