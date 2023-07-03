@@ -9,6 +9,3 @@
 *.sh
 *.cmd
 *.exe
-
-fossil
-shard.lock
