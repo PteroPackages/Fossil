@@ -19,11 +19,16 @@ module Fossil::HTTP
 
     results = [data]
     if (total = data["meta"]["pagination"]["total_pages"].as_i) > 1
+      progress = Progress.new total
+
       (2..total).each do |index|
         response = Crest.get "#{Config.url}/api/application#{path}?page=#{index}", headers: DEFAULT_HEADERS
         data = JSON.parse response.body
         results << data
+        progress.tick
       end
+
+      progress.done
     end
 
     results

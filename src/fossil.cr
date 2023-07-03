@@ -11,6 +11,7 @@ require "./commands/*"
 require "./config"
 require "./http"
 require "./models"
+require "./progress"
 
 Colorize.on_tty_only!
 
