@@ -39,7 +39,7 @@ module Fossil::Config
     raise Error.new "Invalid API key format (must start with 'ptlc_')" unless data[1].starts_with? "ptlc_"
 
     @@url, @@key = data
-  rescue File::Error
+  rescue File::NotFoundError
     raise Error.new "File not found (#{CACHE_DIR / "fossil.conf"})"
   end
 
@@ -47,6 +47,8 @@ module Fossil::Config
     data = File.read_lines CACHE_DIR / "fossil.conf"
     return unless data.size == 2
     @@url, @@key = data
+  rescue File::NotFoundError
+    raise Error.new "File not found (#{CACHE_DIR / "fossil.conf"})"
   end
 
   def self.save : Nil
