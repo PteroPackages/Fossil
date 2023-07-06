@@ -52,6 +52,7 @@ module Fossil::Commands
 
       info <<-INFO
         ID:      #{archive.id}
+        Size:    #{File.size(path).humanize_bytes}
         Created: #{Time.unix archive.timestamp}
         Scopes:  #{archive.scopes.join ", "}
         Files:
