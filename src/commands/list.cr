@@ -10,7 +10,7 @@ module Fossil::Commands
 
     def run(arguments : Cling::Arguments, options : Cling::Options) : Nil
       archives = Dir.children(Fossil::Config::LIBRARY_DIR).select &.ends_with? ".tar.gz"
-      archives.each { |a| info a }
+      archives.each { |arc| info arc[...-7] }
     end
   end
 end
