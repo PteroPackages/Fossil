@@ -27,8 +27,8 @@ module Fossil::Commands
              when "last"
                archives.last
              else
-               if archives.includes? id
-                 id
+               if path = archives.find &.includes?(id)
+                 path
                else
                  error "No archive with that ID found"
                  system_exit
