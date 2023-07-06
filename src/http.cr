@@ -47,8 +47,8 @@ module Fossil::HTTP
     end
   end
 
-  def_source user, "/users"
-  def_source server, "/servers"
-  def_source node, "/nodes"
-  def_source nest, "/nests"
+  def_source users, "/users"
+  def_source servers, "/servers"
+  def_source nodes, "/nodes"
+  def_source nests, "/nests"
 end
